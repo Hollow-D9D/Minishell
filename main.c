@@ -9,7 +9,9 @@
 /*   Updated: 2021/05/11 15:24:10 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdio.h>
+
+#include "minishell.h"
+
 int main(int argc, char **argv, char **envp)
 {
 	for(int i = 0; envp[i]; i++)
