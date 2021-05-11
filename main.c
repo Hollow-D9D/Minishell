@@ -6,11 +6,15 @@
 /*   By: tharutyu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/11 14:51:12 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/11 15:24:10 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <fcntl.h>
-
+int main(int argc, char **argv, char **envp)
+{
+	for(int i = 0; envp[i]; i++)
+	{
+		printf("%s\n", envp[i]);
+	}
+	return (0);
+}
