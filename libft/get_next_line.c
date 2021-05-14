@@ -6,13 +6,13 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 02:00:55 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/04/27 02:01:32 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/14 14:25:08 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-int	ft_get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line)
 {
 	int		i;
 	int		n;

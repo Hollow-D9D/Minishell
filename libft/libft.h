@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/24 00:22:44 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/04/27 02:01:51 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/14 14:25:05 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct	s_list
 
 int				ft_check_char(char const *x, char y);
 
-int				ft_get_next_line(int fd, char **line);
+int				get_next_line(int fd, char **line);
 
 t_list			*ft_lstmap(t_list *lst, void *(*f)(void *),
 void (*del)(void *));
