@@ -28,5 +28,7 @@
 # include <errno.h>
 
 int main(int argc, char **argv, char **envp);
+void my_int(int number);
+void my_quit(int number);
 
 #endif
