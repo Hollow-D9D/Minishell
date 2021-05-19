@@ -31,8 +31,8 @@ void my_quit(int number)
 int main()
 {
 	signal(SIGINT, my_int); // ctrl + C //
-	//signal(SIGHUP, my_hup); // ctrl + D //
-	signal(SIGINT, my_quit); // ctrl + \ //
+	signal(SIGHUP, my_hup); // ctrl + D //
+	signal(SIGQUIT, my_quit); // ctrl + \ //
 	while(1) ;
 	return(0);
 }
