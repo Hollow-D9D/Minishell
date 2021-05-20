@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gamirjan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 16:21:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/05/14 14:21:46 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/21 00:00:07 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,9 @@
 # include <dirent.h>
 # include <string.h>
 # include <errno.h>
+
+#define SPACES "\t\r\v\f "
+#define SEPERATORS "><|;"
 
 int main(int argc, char **argv, char **envp);
 
