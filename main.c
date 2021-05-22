@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/21 00:53:26 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/22 22:01:10 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,14 +42,12 @@ typedef struct	s_checks
 	char		**env; //mer popoxakannerna $
 }				t_checks;
 
-<<<<<<< HEAD
 int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela hashvum
 {
 	int i;
 	int q; //quote
 	int dq; //double quote
 
-	printf("%c\n", line[0]);
 	i = 0;
 	q = 0;
 	dq = 0;
@@ -68,6 +66,21 @@ int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela 
 	return (i);
 }
 
+void	free_args(t_checks *check)
+{
+	int i;
+
+	i = 0;
+	while(i < check->argc)
+	{
+		if(check->coms[i].pr)
+			free(check->coms[i].pr);
+		if(check->coms[i].args)
+			free(check->coms[i].args);
+		i++;
+	}
+	free(check->coms);
+}
 
 int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think, stuguma qani process es pass arel
 {
@@ -92,30 +105,27 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 	return (n);
 }
 
-int		get_process(char *line, int n, t_checks *check, int j)
+void		get_process(char *line, int n, t_checks *check, int j)
 {
 	int i;
+	char *tmp;
 
-	i = -1;
-	while(++i < n)
+	i = check->index;
+	while (ft_check_char(SPACES, line[i]))
+ 		i++;
+	check->coms[j].pr = ft_substr(line + i, 0, ft_word_len(line + i));
+	i += ft_word_len(line + i);
+	while (i < n)
 	{
-		if (!check->dquote && line[i] == '\'')  //quote-handled
-			check->quote = !check->quote;
-		if (!check->quote && line[i] == '\"')
-			check->dquote = !check->dquote;
-		if (!check->dquote && !check->quote && !ft_check_char(SPACES, line[i]))
-		{
-			if (!check->is_process)  //check if first word, as the first word represents the process        nayuma arajinna(processna) te che
-			{
-				check->coms[j].pr = ft_substr(line, i, ft_word_len(line+i)); //vercnuma process@ qcuma struct stegh zagvozdka ka qani vor es mtacum em chishta verjnakan count imanal u heto malloc anel, dranic heto nor parse anel
-				check->is_process = 1;
-			}
-			//else
-				//parse_process_arg(line+i);  //parse process arguments    processi argumentnerna parse anum
-		}
+		while (ft_check_char(SPACES, line[i]))
+			i++;
+		tmp = ft_substr(line + i, 0, ft_word_len(line + i));
+		tmp = ft_strjoin(tmp, " ");
+		check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
+		free(tmp);
+		i += ft_word_len(line + i);
 	}
-	return 1;
-	//give_seperator();                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
+	// give_seperator();                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
 }
 
 void	parse_args(t_checks *check, char *line)
@@ -126,31 +136,24 @@ void	parse_args(t_checks *check, char *line)
 	i = -1;
 	j = 0;
 	check->argc = arg_count_base(line, check, SEPERATORS); //malloci hamar petqa vor imanas qani processi tegh es bacum
-	check->coms = malloc(sizeof(t_process) * check->argc);
+	check->coms = ft_calloc(sizeof(t_process), check->argc);
 	while (line[++i])  //anavarta der mtacum em sra vra
 	{
-		// while(line[i] && !check->dquote && !check->quote && !ft_check_char(SEPERATORS, line[i])) //skip until the seperator to take one process and parse
-		// {
-		// 	if (!check->dquote && line[i] == '\'')  //quote-handled
-		// 	check->quote = !check->quote;
-		// 	if (!check->quote && line[i] == '\"')
-		// 	check->dquote = !check->dquote;
-		// 	i++;
-		// }
-		// i = give_checks(line, i, check, j);  //parse anum 1 process@
-		// check->index = i; //index@ petqa vor 
+		// printf("parse_args\n");
 		if(!check->dquote && line[i] == '\'')  //quote-handled
 			check->quote = !check->quote;
 		if(!check->quote && line[i] == '\"')
 			check->dquote = !check->dquote;
-		if(!check->dquote && !check->quote && !ft_check_char(SEPERATORS, line[i])) // seperatori conditionna test arac chi
+		if(!check->dquote && !check->quote && ft_check_char(SEPERATORS, line[i])) // seperatori conditionna test arac chi
 		{
-			i = get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
+			printf("mta es anter tegh@\n");
+			get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
 			j++; //processneri indexna
+			check->index = i;
 			continue ;
 		}
-		i++;
 	}
+	get_process(line, i, check, j);
 }
 
 void	zero_checks(t_checks *check)
@@ -171,153 +174,28 @@ int		main(int argc, char **argv, char **envp)
 {
 	char *line;
 	int status;
-
-	status = 1;
-	/*
-	t_checks check;
-=======
-// int ft_len_char(char *line, t_checks *check)
-// {
-// 	int i;
-
-// 	while(line[i] && !ft_check_char(line[i], check->spaces) && !ft_check_char(line[i], check->checks))  //zut nayuma vor 1 bar vercni, minchev seperator space kam el \0
-// 		i++;
-// 	return (i);
-// }
-
-// int		give_checks(char *line, int n, t_checks *check, int j)
-// {
-// 	int i;
-
-// 	i = -1;
-// 	while(++i < n)
-// 	{
-// 		while(!ft_check_char(line[i], check->spaces)) //skip spaces
-// 			i++;
-// 		if(!check->is_process)  //check if first word, as the first word represents the process        nayuma arajinna(processna) te che
-// 		{
-// 			check->comms[j].pr = ft_substr(line+i, ft_len_char(line+i, check)); //vercnuma process@ qcuma struct stegh zagvozdka ka qani vor es mtacum em chishta verjnakan count imanal u heto malloc anel, dranic heto nor parse anel
-// 			check->is_process = 1;
-// 		}
-// 		else
-// 			parse_process_arg(line+i);  //parse process arguments    processi argumentnerna parse anum
-// 	}
-// 	give_seperator();                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
-// }
-
-// int		arg_count(char *line, t_checks *check)  //complete I think, stuguma qani process es pass arel
-// {
-// 	int i;
-// 	int n;
-
-// 	n = 1;
-// 	i = 0;
-// 	while(line[i])
-// 	{
-// 		if(!check->dquote && line[i] == '\'')  //quote-handled
-// 			check->quote = !check->quote;
-// 		if(!check->quote && line[i] == '\"')
-// 			check->dquote = !check->dquote;
-// 		if(!check->dquote && !check->quote)
-// 		{
-// 			if(ft_check_char(check->checks, line[i]))
-// 				n++;
-// 		}
-// 		i++;
-// 	}
-// 	return (n);
-// }
-
-// void	parse_args(t_checks *check, char *line)
-// {
-// 	int i;
-// 	int j;
-
-// 	i = -1;
-// 	j = 0;
-// 	check->argc = arg_count(line, check); //malloci hamar petqa vor imanas qani processi tegh es bacum
-// 	check->coms = malloc(sizeof(t_process) * check->args);
-// 	while (line[++i])  //anavarta der mtacum em sra vra
-// 	{
-// 		while(line[i] && !check->dquote && !check->quote && !ft_check_char(check->checks, line[i])) //skip until the seperator to take one process and parse
-// 		{
-// 			if (!check->dquote && line[i] == '\'')  //quote-handled
-// 			check->quote = !check->quote;
-// 			if (!check->quote && line[i] == '\"')
-// 			check->dquote = !check->dquote;
-// 			i++;
-// 		}
-// 		i = give_checks(line, i, check, j);  //parse anum 1 process@
-// 		check->index = i; //index@ petqa vor 
-// 		j++;
-// 	}
-// }
-
-// void	zero_checks(t_checks *check)
-// {
-// 	check->index = 0;
-// 	check->argc = 0;
-// 	check->is_process = 0;
-// 	check->quote = 0;
-// 	check->dquote = 0;
-// 	check->pipe = 0;
-// 	check->redir = 0;
-// 	check->great = 0;
-// 	check->less = 0;
-// 	check->scolon = 0;
-// }
-
-// void	ini_checks(t_checks *check)
-// {
-// 	check->checks = ft_strdup("><|;");
-// 	check->spaces = ft_strdup("\t\r\v\f ");
-// }
-
-int		main(int argc, char **argv, char **envp)
-{
-	// t_checks check;
->>>>>>> 2b80f0f59500fa1be8d2311a943637587832fdd5
-	char *line;
-	int status;
 	int pid;
 	int	cpid;
+	t_checks check;
 
-	pid = fork();
-	if (pid != 0)
-		cpid = wait(NULL);
+	// pid = fork();
+	// if (pid != 0)
+	// 	cpid = wait(NULL);
+	// status = 1;
+	// printf("%d\n", getpid());
 	status = 1;
-<<<<<<< HEAD
-	printf("%d\n", getpid());
-	//ini_checks(&check);  //checkerna talis seperatorneri mek el spaceri
 	while (status)
 	{
-		write(1, "SUPERCOOL SHELL >", 17); //command prompt
+		write(1, "SHELL> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
-		//parse_args(&check, line); // parse lines 
+		parse_args(&check, line); // parse lines 
+		printf("Process name: %s\n", check.coms[0].pr);
+		printf("Process args: %s\n", check.coms[0].args);
 		//status = exec_args(&check);
+		free_args(&check);
 	}
-	*/
-	while (status)
-	{
-		write(1, "SUPERCOOL SHELL >", 17); //command prompt
-		get_next_line(0, &line); //input 
-		printf("%d\n", ft_word_len(line));
-	}
-=======
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //
-	// ini_checks(&check);  //zroyacnuma u checkerna talis seperatorneri mek el spaceri
-	while (status)
-	{
-		write(1, "SUPERCOOL SHELL >", 17); //command prompt
-		// zero_checks(&check);
-		if(!get_next_line(0, &line)) //input
-			break; 
-		// parse_args(&check, line); // parse lines 
-		//status = exec_args(&check);
-	}
-	printf("Valod\n");
->>>>>>> 2b80f0f59500fa1be8d2311a943637587832fdd5
 	return (0);
 }
