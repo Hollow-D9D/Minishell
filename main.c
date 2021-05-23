@@ -183,6 +183,35 @@ void	zero_checks(t_checks *check)
 	check->scolon = 0;
 }
 
+int execute(t_checks *check, char **envp)
+{
+	pid_t pid;
+	int status;
+
+	pid = fork();
+	if (pid == 0) 
+  	{
+    	if (execve(check->coms->pr, &ft_strjoin(check-check->coms->args), envp) == -1) 
+    	{
+      		perror("lsh");
+    	}
+    	exit(EXIT_FAILURE);
+  	} 
+  	else if (pid < 0) 
+  	{
+   		perror("lsh");
+  	} 
+  	else 
+  	{
+    	do 
+    	{
+      		waitpid(pid, &status, WUNTRACED);
+   		}
+    	while (!WIFEXITED(status) && !WIFSIGNALED(status));
+  }
+  return 1;
+}
+
 int		main(int argc, char **argv, char **envp)
 {
 	char *line;
@@ -203,6 +232,7 @@ int		main(int argc, char **argv, char **envp)
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
 		parse_args(&check, line); // parse lines 
+		execute(&check, envp);
 		//status = exec_args(&check);
 		free_args(&check);
 	}
