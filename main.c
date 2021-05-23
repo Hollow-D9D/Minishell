@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/22 22:01:10 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/22 23:05:11 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,11 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 	return (n);
 }
 
+// void		give_seperator(t_checks *check)
+// {
+
+// }
+
 void		get_process(char *line, int n, t_checks *check, int j)
 {
 	int i;
@@ -125,7 +130,7 @@ void		get_process(char *line, int n, t_checks *check, int j)
 		free(tmp);
 		i += ft_word_len(line + i);
 	}
-	// give_seperator();                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
+	// give_seperator(check,);                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
 }
 
 void	parse_args(t_checks *check, char *line)
@@ -149,11 +154,19 @@ void	parse_args(t_checks *check, char *line)
 			printf("mta es anter tegh@\n");
 			get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
 			j++; //processneri indexna
+			while(ft_check_char(SEPERATORS, line[i]))
+				i++;
 			check->index = i;
 			continue ;
 		}
 	}
 	get_process(line, i, check, j);
+	printf("j :%d\n", j);
+	for(int k = 0; k < check->argc; k++)
+	{
+		printf("Process name: %s\n", check->coms[k].pr);
+		printf("Process args: %s\n", check->coms[k].args);
+	}
 }
 
 void	zero_checks(t_checks *check)
@@ -190,8 +203,6 @@ int		main(int argc, char **argv, char **envp)
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
 		parse_args(&check, line); // parse lines 
-		printf("Process name: %s\n", check.coms[0].pr);
-		printf("Process args: %s\n", check.coms[0].args);
 		//status = exec_args(&check);
 		free_args(&check);
 	}
