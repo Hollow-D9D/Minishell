@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/24 23:10:32 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/25 00:39:52 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,7 +228,7 @@ int		word_count_base(char *line, t_checks *check, char *base)  //complete I thin
 
 // }
 
-void ft_trim_quotes(char *str)
+void ft_trim_quotes(char *str) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
 {
 	int i;
 	int q;
@@ -236,7 +236,7 @@ void ft_trim_quotes(char *str)
 	int j;
 	char *buff;
 
-	j = 0
+	j = 0;
 	i = 0;
 	q = 0;
 	dq = 0;
@@ -259,6 +259,9 @@ void ft_trim_quotes(char *str)
 		i++;
 		j++;
 	}
+	free(str);
+	str = ft_strdup(buff);
+	free(buff);
 }
 
 void		get_process(char *line, int n, t_checks *check, int j)
