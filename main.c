@@ -13,7 +13,6 @@
 
 //GEV ERROR HANDLING PETQA ARVI HENC HIMA ES PARSING EM ANUM 
 
-// bin path == /Users/gamirjan/Desktop/ls/lolp/builtins/bin/
 // bin path == /Users/gamirjan/.brew/bin/
 // bin path == /Users/gamirjan/.brew/bin/
 // bin path == /usr/local/bin/
@@ -32,21 +31,19 @@
 //   param2 (null)
 #include "minishell.h"
 
-int to_cd(char **args);
-int to_exit(char **args);
-int to_pwd(char **args);
-
 char *builtin_str[] = 
 {
 	"cd",
 	"exit",
-	"pwd"
+	"pwd",
+	"echo"
 };
 
 int (*builtin_func[]) (char **) = {
 	&to_cd,
 	&to_exit,
-	&to_pwd
+	&to_pwd,
+	&to_echo
 };
 
 typedef	struct	s_process
@@ -79,6 +76,21 @@ int builtins_count()
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
+int to_echo(char **args)
+{
+	if(ft_strcmp(args[1], "-n") == 0)
+		write(1, args[2] ,ft_strlen(args[2]));
+	else
+	{
+		write(1, args[1] ,ft_strlen(args[1]));
+		write(1, "\n", 1);
+	}
+	// printf("%s\n", args[1]);
+	// if (args[2])
+	// 	printf("%s\n", args[2]);
+	return (0);
+}
+
 int to_pwd(char **args)
 {
 	char buffer[1024];
@@ -96,7 +108,7 @@ int to_cd(char **args)
 {
   if (args[1] == NULL) 
   {
-    fprintf(stderr, "lsh: expected argument to \"cd\"\n");
+    fprintf(stderr, "sh: expected argument to \"cd\"\n");
   } 
   else 
   {
@@ -341,6 +353,8 @@ int		main(int argc, char **argv, char **envp)
 	int	cpid;
 	t_checks check;
 
+	signal(SIGINT, my_int); // ctrl + C //
+	signal(SIGQUIT, my_quit); // ctrl + \ //
 	status = 1;
 	while (status)
 	{
@@ -352,7 +366,5 @@ int		main(int argc, char **argv, char **envp)
 		//status = exec_args(&check);
 		free_args(&check);
 	}
-	signal(SIGINT, my_int); // ctrl + C //
-	signal(SIGQUIT, my_quit); // ctrl + \ //
 	return (0);
 }

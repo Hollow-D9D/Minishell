@@ -30,8 +30,13 @@
 #define SPACES "\t\r\v\f \0"
 #define SEPERATORS "><|;"
 
+int to_echo(char **args);
 int main(int argc, char **argv, char **envp);
 void my_int(int number);
 void my_quit(int number);
+int to_cd(char **args);
+int to_exit(char **args);
+int to_pwd(char **args);
+
 
 #endif
