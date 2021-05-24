@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/22 23:05:11 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/24 13:37:59 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,24 @@
 
 int to_cd(char **args);
 int to_exit(char **args);
+int to_pwd(char **args);
 
 char *builtin_str[] = 
 {
 	"cd",
-	"exit"
+	"exit",
+	"pwd"
 };
 
 int (*builtin_func[]) (char **) = {
 	&to_cd,
-	&to_exit
+	&to_exit,
+	&to_pwd
 };
 
 typedef	struct	s_process
 {
-	char	*pr; //process name
-	char	*args; //arguments
+	char	**pr; //process name
 	int		fd[2]; //input output for pipe
 	char	lsep; //left seperator
 	char	rsep; //right seperator 
@@ -77,9 +79,17 @@ int builtins_count()
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
+int to_pwd(char **args)
+{
+	char buffer[1024];
+	getcwd(buffer, 1024);
+	printf("%s\n", buffer);
+	return (0);
+}
+
 int to_exit(char **args)
 {
-  return 0;
+  exit(0);
 }
 
 int to_cd(char **args)
@@ -131,8 +141,6 @@ void	free_args(t_checks *check)
 	{
 		if(check->coms[i].pr)
 			free(check->coms[i].pr);
-		if(check->coms[i].args)
-			free(check->coms[i].args);
 		i++;
 	}
 	free(check->coms);
@@ -145,16 +153,44 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 
 	n = 1;
 	i = 0;
-	while(line[i])
+	while (line[i])
 	{
-		if(!check->dquote && line[i] == '\'')  //quote-handled
+		if (!check->dquote && line[i] == '\'')  //quote-handled
 			check->quote = !check->quote;
-		if(!check->quote && line[i] == '\"')
+		if (!check->quote && line[i] == '\"')
 			check->dquote = !check->dquote;
-		if(!check->dquote && !check->quote)
+		if (!check->dquote && !check->quote)
 		{
-			if(ft_check_char(base, line[i]))
+			if (ft_check_char(base, line[i]))
 				n++;
+		}
+		i++;
+	}
+	return (n);
+}
+
+int		word_count_base(char *line, t_checks *check, char *base)  //complete I think, stuguma qani process es pass arel
+{
+	int i;
+	int n;
+
+	n = 1;
+	i = 0;
+	while (line[i])
+	{
+		if (!check->dquote && line[i] == '\'')  //quote-handled
+			check->quote = !check->quote;
+		if (!check->quote && line[i] == '\"')
+			check->dquote = !check->dquote;
+		if (!check->dquote && !check->quote)
+		{
+			if (ft_check_char(base, line[i]))
+			{
+				n++;
+				while (line[i] && ft_check_char(base, line[i]))
+					i++;
+				continue ;
+			}
 		}
 		i++;
 	}
@@ -170,23 +206,37 @@ void		get_process(char *line, int n, t_checks *check, int j)
 {
 	int i;
 	char *tmp;
+	int num;
+	int z;
 
 	i = check->index;
 	while (ft_check_char(SPACES, line[i]))
  		i++;
-	check->coms[j].pr = ft_substr(line + i, 0, ft_word_len(line + i));
-	// i += ft_word_len(line + i);
-	// while (i < n)
-	// {
-	// 	while (ft_check_char(SPACES, line[i]))
-	// 		i++;
-	// 	tmp = ft_substr(line + i, 0, ft_word_len(line + i));
-	// 	tmp = ft_strjoin(tmp, " ");
-	// 	check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
-	// 	free(tmp);
-	// 	i += ft_word_len(line + i);
-	// }
-	check->coms[j].args = ft_substr(line + i, 0, n);
+ 	num = word_count_base(line + i, check, SPACES);
+ 	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
+ 	check->coms[j].pr[num] = NULL;
+ 	z = 0;
+ 	while(z < num)
+ 	{
+ 		while (ft_check_char(SPACES, line[i]))
+ 			i++;
+ 		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
+ 		i += ft_word_len(line + i);
+ 		z++;
+ 	}
+	// check->coms[j].pr = ft_substr(line + i, 0, ft_word_len(line + i));
+	// // i += ft_word_len(line + i);
+	// // while (i < n)
+	// // {
+	// // 	while (ft_check_char(SPACES, line[i]))
+	// // 		i++;
+	// // 	tmp = ft_substr(line + i, 0, ft_word_len(line + i));
+	// // 	tmp = ft_strjoin(tmp, " ");
+	// // 	check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
+	// // 	free(tmp);
+	// // 	i += ft_word_len(line + i);
+	// // }
+	// check->coms[j].args = ft_substr(line + i, 0, n);
 	// give_seperator(check,);                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
 }
 
@@ -218,12 +268,6 @@ void	parse_args(t_checks *check, char *line)
 		}
 	}
 	get_process(line, i, check, j);
-	printf("j :%d\n", j);
-	// for(int k = 0; k < check->argc; k++)
-	// {
-	// 	printf("Process name: %s\n", check->coms[k].pr);
-	// 	printf("Process args: %s\n", check->coms[k].args);
-	// }
 }
 
 void	zero_checks(t_checks *check)
@@ -245,11 +289,10 @@ int execute(t_checks *check, char **envp)
 	pid_t pid;
 	int status;
 
-	printf("args = %s\n", check->coms[0].args);
 	pid = fork();
 	if (pid == 0) 
   	{
-    	if (execve(check->coms[0].pr, &check->coms[0].args, envp) == -1) 
+    	if (execve(check->coms->pr[0], check->coms->pr, envp) == -1) 
     	{
       		perror("error ara");
     	}
@@ -281,9 +324,9 @@ int builtin(t_checks *check, char **env)
 	}
 	while (i < builtins_count())
 	{
-		if (ft_strcmp(check->coms->pr, builtin_str[i]) == 0)
+		if (ft_strcmp(check->coms[0].pr[0], builtin_str[i]) == 0)
 		{
-			return (*builtin_func[i])(&check->coms->args); // 2rd popoxakan@ petqa mer erkchap@ lini;
+			return (*builtin_func[i])(check->coms->pr);
 		}
 		i++;
 	}
