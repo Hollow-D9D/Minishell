@@ -36,14 +36,16 @@ char *builtin_str[] =
 	"cd",
 	"exit",
 	"pwd",
-	"echo"
+	"echo",
+	"env"
 };
 
 int (*builtin_func[]) (char **) = {
 	&to_cd,
 	&to_exit,
 	&to_pwd,
-	&to_echo
+	&to_echo,
+	&to_env
 };
 
 typedef	struct	s_process
@@ -76,6 +78,10 @@ int builtins_count()
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
+int to_env(char **args)
+{
+	return (0);
+}
 int to_echo(char **args)
 {
 	if(ft_strcmp(args[1], "-n") == 0)
@@ -85,9 +91,6 @@ int to_echo(char **args)
 		write(1, args[1] ,ft_strlen(args[1]));
 		write(1, "\n", 1);
 	}
-	// printf("%s\n", args[1]);
-	// if (args[2])
-	// 	printf("%s\n", args[2]);
 	return (0);
 }
 

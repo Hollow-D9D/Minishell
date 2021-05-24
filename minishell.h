@@ -37,6 +37,7 @@ void my_quit(int number);
 int to_cd(char **args);
 int to_exit(char **args);
 int to_pwd(char **args);
+int to_env(char **args);
 
 
 #endif
