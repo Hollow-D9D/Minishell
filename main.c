@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/24 13:37:59 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/24 23:10:32 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,13 +84,24 @@ int to_env(char **args)
 }
 int to_echo(char **args)
 {
-	if(ft_strcmp(args[1], "-n") == 0)
-		write(1, args[2] ,ft_strlen(args[2]));
-	else
+	int i;
+	int nflag;
+
+	nflag = 0;
+	i = 1;
+	if (ft_strcmp(args[1], "-n") == 0)
 	{
-		write(1, args[1] ,ft_strlen(args[1]));
-		write(1, "\n", 1);
+		i++;
+		nflag = 1;
 	}
+	while(args[i])
+	{
+		write(1, args[i], ft_strlen(args[i]));
+		write(1, " ", 1);
+		i++;
+	}
+	if (!nflag)
+		write(1, "\n", 1);
 	return (0);
 }
 
@@ -217,6 +228,39 @@ int		word_count_base(char *line, t_checks *check, char *base)  //complete I thin
 
 // }
 
+void ft_trim_quotes(char *str)
+{
+	int i;
+	int q;
+	int dq;
+	int j;
+	char *buff;
+
+	j = 0
+	i = 0;
+	q = 0;
+	dq = 0;
+	buff = malloc(sizeof(char) * ft_strlen(str));
+	while(str[i])
+	{
+		if(!dq && str[i] == '\'')
+		{
+			q = !q;
+			i++;
+			continue;
+		}
+		if(!q && str[i] == '\"')
+		{
+			dq = !dq;
+			i++;
+			continue;
+		}
+		buff[j] = str[i];
+		i++;
+		j++;
+	}
+}
+
 void		get_process(char *line, int n, t_checks *check, int j)
 {
 	int i;
@@ -236,23 +280,11 @@ void		get_process(char *line, int n, t_checks *check, int j)
  		while (ft_check_char(SPACES, line[i]))
  			i++;
  		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
+ 		ft_trim_quotes(check->coms[j].pr[z]);
  		i += ft_word_len(line + i);
  		z++;
  	}
-	// check->coms[j].pr = ft_substr(line + i, 0, ft_word_len(line + i));
-	// // i += ft_word_len(line + i);
-	// // while (i < n)
-	// // {
-	// // 	while (ft_check_char(SPACES, line[i]))
-	// // 		i++;
-	// // 	tmp = ft_substr(line + i, 0, ft_word_len(line + i));
-	// // 	tmp = ft_strjoin(tmp, " ");
-	// // 	check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
-	// // 	free(tmp);
-	// // 	i += ft_word_len(line + i);
-	// // }
-	// check->coms[j].args = ft_substr(line + i, 0, n);
-	// give_seperator(check,);                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
+ 	check->coms[j].pr[z] = '\0';
 }
 
 void	parse_args(t_checks *check, char *line)
