@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/24 00:22:44 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/14 14:25:05 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/24 11:22:42 by gamirjan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,5 +113,7 @@ char			*ft_substr(char const *s, unsigned int start, size_t len);
 int				ft_tolower(int c);
 
 int				ft_toupper(int c);
+
+int				ft_strcmp(char *s1, char *s2);
 
 #endif

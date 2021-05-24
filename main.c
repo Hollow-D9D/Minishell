@@ -32,6 +32,20 @@
 //   param2 (null)
 #include "minishell.h"
 
+int to_cd(char **args);
+int to_exit(char **args);
+
+char *builtin_str[] = 
+{
+	"cd",
+	"exit"
+};
+
+int (*builtin_func[]) (char **) = {
+	&to_cd,
+	&to_exit
+};
+
 typedef	struct	s_process
 {
 	char	*pr; //process name
@@ -57,6 +71,32 @@ typedef struct	s_checks
 	t_process	*coms; //mer commandnerna 
 	char		**env; //mer popoxakannerna $
 }				t_checks;
+
+int builtins_count() 
+{
+	return sizeof(builtin_str) / sizeof(char *);
+}
+
+int to_exit(char **args)
+{
+  return 0;
+}
+
+int to_cd(char **args)
+{
+  if (args[1] == NULL) 
+  {
+    fprintf(stderr, "lsh: expected argument to \"cd\"\n");
+  } 
+  else 
+  {
+    if (chdir(args[1]) != 0) 
+    {
+      perror("lsh");
+    }
+  }
+  return 1;
+}
 
 int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela hashvum
 {
@@ -211,13 +251,13 @@ int execute(t_checks *check, char **envp)
   	{
     	if (execve(check->coms[0].pr, &check->coms[0].args, envp) == -1) 
     	{
-      		perror("lsh");
+      		perror("error ara");
     	}
     	exit(EXIT_FAILURE);
   	} 
   	else if (pid < 0) 
   	{
-   		perror("lsh");
+   		perror("error ara");
   	} 
   	else 
   	{
@@ -227,7 +267,27 @@ int execute(t_checks *check, char **envp)
    		}
     	while (!WIFEXITED(status) && !WIFSIGNALED(status));
   }
-  return 1;
+  return (1);
+}
+
+int builtin(t_checks *check, char **env)
+{
+	int i;
+	i = 0;
+
+	if (check->coms->pr == NULL)
+	{
+		return (1);
+	}
+	while (i < builtins_count())
+	{
+		if (ft_strcmp(check->coms->pr, builtin_str[i]) == 0)
+		{
+			return (*builtin_func[i])(&check->coms->args); // 2rd popoxakan@ petqa mer erkchap@ lini;
+		}
+		i++;
+	}
+	return (execute(check, env));
 }
 
 int		main(int argc, char **argv, char **envp)
@@ -238,19 +298,14 @@ int		main(int argc, char **argv, char **envp)
 	int	cpid;
 	t_checks check;
 
-	// pid = fork();
-	// if (pid != 0)
-	// 	cpid = wait(NULL);
-	// status = 1;
-	// printf("%d\n", getpid());
 	status = 1;
 	while (status)
 	{
-		write(1, "SHELL> ", 7); //command prompt
+		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
 		parse_args(&check, line); // parse lines 
-		execute(&check, envp);
+		builtin(&check, envp);
 		//status = exec_args(&check);
 		free_args(&check);
 	}
