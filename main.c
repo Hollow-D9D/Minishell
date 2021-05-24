@@ -13,7 +13,23 @@
 
 //GEV ERROR HANDLING PETQA ARVI HENC HIMA ES PARSING EM ANUM 
 
+// bin path == /Users/gamirjan/Desktop/ls/lolp/builtins/bin/
+// bin path == /Users/gamirjan/.brew/bin/
+// bin path == /Users/gamirjan/.brew/bin/
+// bin path == /usr/local/bin/
+// bin path == /usr/bin/
+// bin path == /bin/
+// bin path == /usr/sbin/
+// bin path == /sbin/
+// bin path == /usr/local/munki/
+// bin path == /Users/gamirjan/.rvm/bin/
 
+// cikl petqa anenq bolor patherov man ga xosqi mkdir@ ete gtni ashxati ete che false, minchev chisht path@ gtni
+
+// path == /usr/bin/mkdir
+// param0 == mkdir
+//   param1 hayaastan
+//   param2 (null)
 #include "minishell.h"
 
 typedef	struct	s_process
@@ -119,17 +135,18 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	while (ft_check_char(SPACES, line[i]))
  		i++;
 	check->coms[j].pr = ft_substr(line + i, 0, ft_word_len(line + i));
-	i += ft_word_len(line + i);
-	while (i < n)
-	{
-		while (ft_check_char(SPACES, line[i]))
-			i++;
-		tmp = ft_substr(line + i, 0, ft_word_len(line + i));
-		tmp = ft_strjoin(tmp, " ");
-		check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
-		free(tmp);
-		i += ft_word_len(line + i);
-	}
+	// i += ft_word_len(line + i);
+	// while (i < n)
+	// {
+	// 	while (ft_check_char(SPACES, line[i]))
+	// 		i++;
+	// 	tmp = ft_substr(line + i, 0, ft_word_len(line + i));
+	// 	tmp = ft_strjoin(tmp, " ");
+	// 	check->coms[j].args = ft_strjoin(check->coms[j].args, tmp);
+	// 	free(tmp);
+	// 	i += ft_word_len(line + i);
+	// }
+	check->coms[j].args = ft_substr(line + i, 0, n);
 	// give_seperator(check,);                    //parse pipes redirections and so on for processes arden sksuma input output irar kapel. fork anel ev ayln
 }
 
@@ -151,7 +168,7 @@ void	parse_args(t_checks *check, char *line)
 			check->dquote = !check->dquote;
 		if(!check->dquote && !check->quote && ft_check_char(SEPERATORS, line[i])) // seperatori conditionna test arac chi
 		{
-			printf("mta es anter tegh@\n");
+			//printf("mta es anter tegh@\n");
 			get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
 			j++; //processneri indexna
 			while(ft_check_char(SEPERATORS, line[i]))
@@ -162,11 +179,11 @@ void	parse_args(t_checks *check, char *line)
 	}
 	get_process(line, i, check, j);
 	printf("j :%d\n", j);
-	for(int k = 0; k < check->argc; k++)
-	{
-		printf("Process name: %s\n", check->coms[k].pr);
-		printf("Process args: %s\n", check->coms[k].args);
-	}
+	// for(int k = 0; k < check->argc; k++)
+	// {
+	// 	printf("Process name: %s\n", check->coms[k].pr);
+	// 	printf("Process args: %s\n", check->coms[k].args);
+	// }
 }
 
 void	zero_checks(t_checks *check)
@@ -188,10 +205,11 @@ int execute(t_checks *check, char **envp)
 	pid_t pid;
 	int status;
 
+	printf("args = %s\n", check->coms[0].args);
 	pid = fork();
 	if (pid == 0) 
   	{
-    	if (execve(check->coms->pr, &ft_strjoin(check-check->coms->args), envp) == -1) 
+    	if (execve(check->coms[0].pr, &check->coms[0].args, envp) == -1) 
     	{
       		perror("lsh");
     	}
