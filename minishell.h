@@ -55,14 +55,15 @@ typedef struct	s_checks
 	char		**env; //mer popoxakannerna $
 }				t_checks;
 
-int to_echo(t_checks *check);
-int main(int argc, char **argv, char **envp);
-void my_int(int number);
-void my_quit(int number);
-int to_cd(t_checks *check);
-int to_exit(t_checks *check);
-int to_pwd(t_checks *check);
-int to_env(t_checks *check);
-
+int 	main(int argc, char **argv, char **envp);
+void 	my_int(int number);
+void 	my_quit(int number);
+int 	to_cd(t_checks *check);
+int 	to_exit(t_checks *check);
+int 	to_pwd(t_checks *check);
+int 	to_echo(t_checks *check);
+int 	to_env(t_checks *check);
+int 	to_export(t_checks *check);
+int 	to_unset(t_checks *check);
 
 #endif

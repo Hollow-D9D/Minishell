@@ -23,11 +23,6 @@
 // bin path == /Users/gamirjan/.rvm/bin/
 
 // cikl petqa anenq bolor patherov man ga xosqi mkdir@ ete gtni ashxati ete che false, minchev chisht path@ gtni
-
-// path == /usr/bin/mkdir
-// param0 == mkdir
-//   param1 hayaastan
-//   param2 (null)
 #include "minishell.h"
 
 char *builtin_str[] = 
@@ -36,7 +31,9 @@ char *builtin_str[] =
 	"exit",
 	"pwd",
 	"echo",
-	"env"
+	"env",
+	"export",
+	"unset"
 };
 
 int (*builtin_func[]) (t_checks *) = {
@@ -44,7 +41,9 @@ int (*builtin_func[]) (t_checks *) = {
 	&to_exit,
 	&to_pwd,
 	&to_echo,
-	&to_env
+	&to_env,
+	&to_export,
+	to_unset
 };
 
 
@@ -53,17 +52,36 @@ int builtins_count()
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
-int to_env(t_checks *check)
+int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
 {
-	// int i;
-	// i = 0;
+	if (check->coms[0].pr[1] == NULL)  // ete mi argumenta petqa es tpi
+	{
+		write(1, "unset: not enough arguments\n", 28);
+		return(0);
+	}	
+	else
+		return (0);
+}
 
-	// while (check->env[i])
-	// {
-	// 	write(1, check->env[i], ft_strlen(check->env[i]));
-	// 	write(1, "\n", 1);
-	// 	i++;
-	// }
+int to_export(t_checks *check)
+{
+	if (check->coms[0].pr[1] == NULL) // ete mi argumenta petqa env@ tpi
+		return (to_env(check));
+	else
+		return (0);
+}
+
+int to_env(t_checks *check) // mer envna ughaki malloci pah@ garlakhaca
+{
+	int i;
+	i = 0;
+
+	while (check->env[i])
+	{
+		write(1, check->env[i], ft_strlen(check->env[i]));
+		write(1, "\n", 1);
+		i++;
+	}
 	return (0);
 }
 int to_echo(t_checks *check)
@@ -99,7 +117,7 @@ int to_pwd(t_checks *check)
 
 int to_exit(t_checks *check)
 {
-  exit(0);
+	exit(0);
 }
 
 int to_cd(t_checks *check)
@@ -342,7 +360,7 @@ int execute(t_checks *check)
 	pid = fork();
 	if (pid == 0) 
   	{
-    	if (execve(check->coms->pr[0], check->coms->pr, check->env) == -1) 
+    	if (execve(check->coms[0].pr[0], check->coms[0].pr, check->env) == -1) 
     	{
       		perror("error ara");
     	}
