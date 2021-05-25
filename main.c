@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 //GEV ERROR HANDLING PETQA ARVI HENC HIMA ES PARSING EM ANUM 
 
 // bin path == /Users/gamirjan/.brew/bin/
@@ -40,7 +39,7 @@ char *builtin_str[] =
 	"env"
 };
 
-int (*builtin_func[]) (char **) = {
+int (*builtin_func[]) (t_checks *) = {
 	&to_cd,
 	&to_exit,
 	&to_pwd,
@@ -48,55 +47,40 @@ int (*builtin_func[]) (char **) = {
 	&to_env
 };
 
-typedef	struct	s_process
-{
-	char	**pr; //process name
-	int		fd[2]; //input output for pipe
-	char	lsep; //left seperator
-	char	rsep; //right seperator 
-	int		rtnv; //process return value
-}				t_process;
-
-typedef struct	s_checks
-{
-	int			argc;
-	int			is_process; //stuguma arajin barna te che
-	int			quote; //stuguma ' baca te che
-	int			dquote; //stuguma " baca te che
-	int			pipe; //stuguma | ka te che ??
-	int			scolon; //stuguma ; ka te che ??
-	int			great; //stuguma > ka te che ??
-	int			less; //stuguma < ka te che ??
-	int			redir; //stuguma >> ka te che??
-	int			index; //petqa vor haskananq parsingi vaxt ura hasel
-	t_process	*coms; //mer commandnerna 
-	char		**env; //mer popoxakannerna $
-}				t_checks;
 
 int builtins_count() 
 {
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
-int to_env(char **args)
+int to_env(t_checks *check)
 {
+	// int i;
+	// i = 0;
+
+	// while (check->env[i])
+	// {
+	// 	write(1, check->env[i], ft_strlen(check->env[i]));
+	// 	write(1, "\n", 1);
+	// 	i++;
+	// }
 	return (0);
 }
-int to_echo(char **args)
+int to_echo(t_checks *check)
 {
 	int i;
 	int nflag;
 
 	nflag = 0;
 	i = 1;
-	if (ft_strcmp(args[1], "-n") == 0)
+	if (ft_strcmp(check->coms[0].pr[1], "-n") == 0)
 	{
 		i++;
 		nflag = 1;
 	}
-	while(args[i])
+	while(check->coms[0].pr[i])
 	{
-		write(1, args[i], ft_strlen(args[i]));
+		write(1, check->coms[0].pr[i], ft_strlen(check->coms[0].pr[i]));
 		write(1, " ", 1);
 		i++;
 	}
@@ -105,7 +89,7 @@ int to_echo(char **args)
 	return (0);
 }
 
-int to_pwd(char **args)
+int to_pwd(t_checks *check)
 {
 	char buffer[1024];
 	getcwd(buffer, 1024);
@@ -113,25 +97,25 @@ int to_pwd(char **args)
 	return (0);
 }
 
-int to_exit(char **args)
+int to_exit(t_checks *check)
 {
   exit(0);
 }
 
-int to_cd(char **args)
+int to_cd(t_checks *check)
 {
-  if (args[1] == NULL) 
-  {
-    fprintf(stderr, "sh: expected argument to \"cd\"\n");
-  } 
-  else 
-  {
-    if (chdir(args[1]) != 0) 
-    {
-      perror("lsh");
-    }
-  }
-  return 1;
+	if (check->coms[0].pr[1] == NULL) 
+	{
+		fprintf(stderr, "sh: expected argument to \"cd\"\n");
+  	} 
+	else 
+	{
+		if (chdir(check->coms[0].pr[1]) != 0) 
+    	{
+      		perror("lsh");
+   		}
+  	}
+  	return (1);
 }
 
 int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela hashvum
@@ -297,13 +281,15 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	}
 }
 
-void	parse_args(t_checks *check, char *line)
+void	parse_args(t_checks *check, char *line, char **envp)
 {
 	int i;
 	int j;
+	int e;
 
 	i = -1;
 	j = 0;
+	e = 0;
 	check->argc = arg_count_base(line, check, SEPERATORS); //malloci hamar petqa vor imanas qani processi tegh es bacum
 	check->coms = ft_calloc(sizeof(t_process), check->argc);
 	while (line[++i])  //anavarta der mtacum em sra vra
@@ -322,6 +308,15 @@ void	parse_args(t_checks *check, char *line)
 			continue ;
 		}
 	}
+	//write(1, envp[0], ft_strlen(envp[0]));
+	check->env = malloc(10000); /// es petqa normal malloc arvi asenq
+	while (envp[e])
+	{
+		check->env[e] = envp[e];
+		// write(1, check->env[e], ft_strlen(check->env[e]));
+		// write(1, "\n", 1);
+		e++;
+	}
 	get_process(line, i, check, j);
 }
 
@@ -339,7 +334,7 @@ void	zero_checks(t_checks *check)
 	check->scolon = 0;
 }
 
-int execute(t_checks *check, char **envp)
+int execute(t_checks *check)
 {
 	pid_t pid;
 	int status;
@@ -347,7 +342,7 @@ int execute(t_checks *check, char **envp)
 	pid = fork();
 	if (pid == 0) 
   	{
-    	if (execve(check->coms->pr[0], check->coms->pr, envp) == -1) 
+    	if (execve(check->coms->pr[0], check->coms->pr, check->env) == -1) 
     	{
       		perror("error ara");
     	}
@@ -368,7 +363,7 @@ int execute(t_checks *check, char **envp)
   return (1);
 }
 
-int builtin(t_checks *check, char **env)
+int builtin(t_checks *check)
 {
 	int i;
 	i = 0;
@@ -381,11 +376,11 @@ int builtin(t_checks *check, char **env)
 	{
 		if (ft_strcmp(check->coms[0].pr[0], builtin_str[i]) == 0)
 		{
-			return (*builtin_func[i])(check->coms->pr);
+			return (*builtin_func[i])(check);
 		}
 		i++;
 	}
-	return (execute(check, env));
+	return (execute(check));
 }
 
 int		main(int argc, char **argv, char **envp)
@@ -404,8 +399,8 @@ int		main(int argc, char **argv, char **envp)
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
-		parse_args(&check, line); // parse lines 
-		builtin(&check, envp);
+		parse_args(&check, line, envp); // parse lines 
+		builtin(&check);
 		//status = exec_args(&check);
 		free_args(&check);
 	}
