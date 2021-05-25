@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/25 00:39:52 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/25 13:22:32 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,12 +161,20 @@ int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela 
 void	free_args(t_checks *check)
 {
 	int i;
+	int j;
 
 	i = 0;
 	while(i < check->argc)
 	{
-		if(check->coms[i].pr)
-			free(check->coms[i].pr);
+		j = 0;
+		while(check->coms[i].pr[j])
+		{
+			// printf("valod: %d\n", check->argc);
+			free(check->coms[i].pr[j]);
+			j++;
+		}
+		
+		// free(check->coms[i].pr);
 		i++;
 	}
 	free(check->coms);
@@ -195,14 +203,14 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 	return (n);
 }
 
-int		word_count_base(char *line, t_checks *check, char *base)  //complete I think, stuguma qani process es pass arel
+int		word_count_base(char *line, t_checks *check, char *base, int num)  //complete I think, stuguma qani process es pass arel
 {
 	int i;
 	int n;
 
 	n = 1;
 	i = 0;
-	while (line[i])
+	while (i < num - 1)
 	{
 		if (!check->dquote && line[i] == '\'')  //quote-handled
 			check->quote = !check->quote;
@@ -273,21 +281,20 @@ void		get_process(char *line, int n, t_checks *check, int j)
 
 	i = check->index;
 	while (ft_check_char(SPACES, line[i]))
- 		i++;
- 	num = word_count_base(line + i, check, SPACES);
- 	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
- 	check->coms[j].pr[num] = NULL;
- 	z = 0;
- 	while(z < num)
- 	{
- 		while (ft_check_char(SPACES, line[i]))
- 			i++;
- 		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
- 		ft_trim_quotes(check->coms[j].pr[z]);
- 		i += ft_word_len(line + i);
- 		z++;
- 	}
- 	check->coms[j].pr[z] = '\0';
+		i++;
+	num = word_count_base(line + i, check, SPACES, n);
+	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
+	check->coms[j].pr[num] = NULL;
+	z = 0;
+	while(z < num)
+	{
+		while (ft_check_char(SPACES, line[i]))
+			i++;
+		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
+		ft_trim_quotes(check->coms[j].pr[z]);
+		i += ft_word_len(line + i);
+		z++;
+	}
 }
 
 void	parse_args(t_checks *check, char *line)
@@ -301,14 +308,12 @@ void	parse_args(t_checks *check, char *line)
 	check->coms = ft_calloc(sizeof(t_process), check->argc);
 	while (line[++i])  //anavarta der mtacum em sra vra
 	{
-		// printf("parse_args\n");
 		if(!check->dquote && line[i] == '\'')  //quote-handled
 			check->quote = !check->quote;
 		if(!check->quote && line[i] == '\"')
 			check->dquote = !check->dquote;
 		if(!check->dquote && !check->quote && ft_check_char(SEPERATORS, line[i])) // seperatori conditionna test arac chi
 		{
-			//printf("mta es anter tegh@\n");
 			get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
 			j++; //processneri indexna
 			while(ft_check_char(SEPERATORS, line[i]))
