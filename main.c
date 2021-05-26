@@ -58,7 +58,7 @@ int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
 	{
 		write(1, "unset: not enough arguments\n", 28);
 		return(0);
-	}	
+	}
 	else
 		return (0);
 }
@@ -75,8 +75,8 @@ int ft_var_len(char *str, char c)
 
 char **ft_add_env_var(char *str, char **env)
 {
-	t_checks temp;
-	char **newenv;
+	t_checks 	temp;
+	char 		**newenv;
 	int 		i; 
 	int 		j;
 	
@@ -96,7 +96,7 @@ char **ft_add_env_var(char *str, char **env)
 	j = 0;
 	while(temp.env[j])
 	{
-		newenv[j] = temp.env[j];
+		newenv[j] = ft_strdup(temp.env[j]);
 		++j;
 	}
 	newenv[j++] = ft_strdup(str);
@@ -136,7 +136,10 @@ int to_export(t_checks *check)
 				j++;
 			}
 			if (check->env[j])
+			{
+				i++;
 				continue ;
+			}
 			check->env = ft_add_env_var(check->coms[0].pr[i], check->env);
 			i++;
 		}
@@ -470,7 +473,7 @@ void 	init_envp(char **envp, t_checks *check)
 
 	while (envp[e])
 		e++;
-	check->env = malloc(sizeof(char*) * (e + 1)); /// es petqa normal malloc arvi asenq
+	check->env = malloc(sizeof(char *) * (e + 1)); /// es petqa normal malloc arvi asenq
 	check->env[e] = NULL;
 	e = 0;
 	while (envp[e])
