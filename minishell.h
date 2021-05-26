@@ -65,5 +65,6 @@ int 	to_echo(t_checks *check);
 int 	to_env(t_checks *check);
 int 	to_export(t_checks *check);
 int 	to_unset(t_checks *check);
+void 	init_envp(char **envp, t_checks *check);
 
 #endif

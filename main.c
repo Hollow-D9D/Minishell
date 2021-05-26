@@ -70,9 +70,47 @@ int ft_var_len(char *str, char c)
 	i = 0;
 	while (str[i] && str[i] != c)
 		i++;
-	return (i);
+	return (i + 1);
 }
 
+char **ft_add_env_var(char *str, char **env)
+{
+	t_checks temp;
+	char **newenv;
+	int 		i; 
+	int 		j;
+	
+	i = 0;
+	j = 0;
+	while(env[i])
+		i++;
+	i++;
+	init_envp(env, &temp);
+	while(env[j])
+	{
+		free(env[j]);
+		++j;
+	}
+	free(env);
+	newenv = malloc((i + 1) * sizeof(char *));
+	j = 0;
+	while(temp.env[j])
+	{
+		newenv[j] = temp.env[j];
+		++j;
+	}
+	newenv[j++] = ft_strdup(str);
+	newenv[j] = NULL;
+	j = 0;
+	while(temp.env[j])
+	{
+		free(temp.env[j]);
+		++j;
+	}
+	free(temp.env);
+	// free_args(&temp);
+	return newenv;
+}
 
 int to_export(t_checks *check)
 {
@@ -88,15 +126,19 @@ int to_export(t_checks *check)
 			j = 0;
 			while (check->env[j])
 			{
-				if(!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
+				if (!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
 				{
-					printf("valod\n");
+					printf("%d\n", ft_var_len(check->env[j], '='));
 					free(check->env[j]);
 					check->env[j] = ft_strdup(check->coms[0].pr[i]);
+					break ;
 				}
 				j++;
 			}
-			i++;//ft_add_env_var(check->coms[0].pr[i], check->env);
+			if (check->env[j])
+				continue ;
+			check->env = ft_add_env_var(check->coms[0].pr[i], check->env);
+			i++;
 		}
 	return (0);
 }
@@ -329,15 +371,13 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	}
 }
 
-void	parse_args(t_checks *check, char *line, char **envp)
+void	parse_args(t_checks *check, char *line)
 {
 	int i;
 	int j;
-	int e;
 
 	i = -1;
 	j = 0;
-	e = 0;
 	check->argc = arg_count_base(line, check, SEPERATORS); //malloci hamar petqa vor imanas qani processi tegh es bacum
 	check->coms = ft_calloc(sizeof(t_process), check->argc);
 	while (line[++i])  //anavarta der mtacum em sra vra
@@ -357,18 +397,6 @@ void	parse_args(t_checks *check, char *line, char **envp)
 		}
 	}
 	//write(1, envp[0], ft_strlen(envp[0]));
-	while (envp[e])
-		e++;
-	check->env = malloc(sizeof(char*) * (e + 1)); /// es petqa normal malloc arvi asenq
-	check->env[e] = NULL;
-	e = 0;
-	while (envp[e])
-	{
-		check->env[e] = ft_strdup(envp[e]);
-		// write(1, check->env[e], ft_strlen(check->env[e]));
-		// write(1, "\n", 1);
-		e++;
-	}
 	get_process(line, i, check, j);
 }
 
@@ -435,6 +463,23 @@ int builtin(t_checks *check)
 	return (execute(check));
 }
 
+void 	init_envp(char **envp, t_checks *check)
+{
+	int e;
+	e = 0;
+
+	while (envp[e])
+		e++;
+	check->env = malloc(sizeof(char*) * (e + 1)); /// es petqa normal malloc arvi asenq
+	check->env[e] = NULL;
+	e = 0;
+	while (envp[e])
+	{
+		check->env[e] = ft_strdup(envp[e]);
+		e++;
+	}
+}
+
 int		main(int argc, char **argv, char **envp)
 {
 	char *line;
@@ -443,6 +488,7 @@ int		main(int argc, char **argv, char **envp)
 	int	cpid;
 	t_checks check;
 
+	init_envp (envp, &check);
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //
 	status = 1;
@@ -451,7 +497,7 @@ int		main(int argc, char **argv, char **envp)
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
-		parse_args(&check, line, envp); // parse lines 
+		parse_args(&check, line); // parse lines 
 		builtin(&check);
 		//status = exec_args(&check);
 		free_args(&check);
