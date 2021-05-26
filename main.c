@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/25 13:22:32 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/26 15:12:31 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,42 @@ int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
 		return (0);
 }
 
+int ft_var_len(char *str, char c)
+{
+	int i;
+
+	i = 0;
+	while (str[i] && str[i] != c)
+		i++;
+	return (i);
+}
+
+
 int to_export(t_checks *check)
 {
+	int i;
+	int j;
+
+	i = 1;
 	if (check->coms[0].pr[1] == NULL) // ete mi argumenta petqa env@ tpi
 		return (to_env(check));
-	else
-		return (0);
+	else 
+		while (check->coms[0].pr[i])
+		{
+			j = 0;
+			while (check->env[j])
+			{
+				if(!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
+				{
+					printf("valod\n");
+					free(check->env[j]);
+					check->env[j] = ft_strdup(check->coms[0].pr[i]);
+				}
+				j++;
+			}
+			i++;//ft_add_env_var(check->coms[0].pr[i], check->env);
+		}
+	return (0);
 }
 
 int to_env(t_checks *check) // mer envna ughaki malloci pah@ garlakhaca
@@ -327,10 +357,14 @@ void	parse_args(t_checks *check, char *line, char **envp)
 		}
 	}
 	//write(1, envp[0], ft_strlen(envp[0]));
-	check->env = malloc(10000); /// es petqa normal malloc arvi asenq
+	while (envp[e])
+		e++;
+	check->env = malloc(sizeof(char*) * (e + 1)); /// es petqa normal malloc arvi asenq
+	check->env[e] = NULL;
+	e = 0;
 	while (envp[e])
 	{
-		check->env[e] = envp[e];
+		check->env[e] = ft_strdup(envp[e]);
 		// write(1, check->env[e], ft_strlen(check->env[e]));
 		// write(1, "\n", 1);
 		e++;
