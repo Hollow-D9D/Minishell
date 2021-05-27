@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-//GEV ERROR HANDLING PETQA ARVI HENC HIMA ES PARSING EM ANUM 
-
 // bin path == /Users/gamirjan/.brew/bin/
 // bin path == /Users/gamirjan/.brew/bin/
 // bin path == /usr/local/bin/
@@ -52,15 +50,78 @@ int builtins_count()
 	return sizeof(builtin_str) / sizeof(char *);
 }
 
+char **ft_delete_env_var(int k, char **env)
+{
+	t_checks 	temp;
+	char 		**newenv;
+	int 		i; 
+	int 		j;
+	
+	i = 0;
+	j = 0;
+	while(env[i])
+		i++;
+	i--;
+	init_envp(env, &temp);
+	while(env[j])
+	{
+		free(env[j]);
+		++j;
+	}
+	free(env);
+	newenv = malloc((i + 1) * sizeof(char *));
+	j = 0;
+	i = 0;
+	while(temp.env[j])
+	{
+		if(j != k)
+		{
+			newenv[i] = ft_strdup(temp.env[j]);
+			i++;
+		}
+		++j;
+	}
+	newenv[j] = NULL;
+	j = 0;
+	while(temp.env[j])
+	{
+		free(temp.env[j]);
+		++j;
+	}
+	free(temp.env);
+	return newenv;
+}
+
 int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
 {
+	int i;
+	int j;
+
+	i = 1;
 	if (check->coms[0].pr[1] == NULL)  // ete mi argumenta petqa es tpi
 	{
 		write(1, "unset: not enough arguments\n", 28);
 		return(0);
 	}
 	else
-		return (0);
+		while (check->coms[0].pr[i])
+		{
+			j = 0;
+			while (check->env[j])
+			{
+				if (!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
+				{
+					//free(check->env[j]);
+					//check->env[j] = NULL;
+					check->env = ft_delete_env_var(j, check->env);
+					//break ;
+				}
+				j++;
+			}
+			i++;
+		}	
+
+	return (0);
 }
 
 int ft_var_len(char *str, char c)
@@ -108,7 +169,6 @@ char **ft_add_env_var(char *str, char **env)
 		++j;
 	}
 	free(temp.env);
-	// free_args(&temp);
 	return newenv;
 }
 
@@ -128,7 +188,6 @@ int to_export(t_checks *check)
 			{
 				if (!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
 				{
-					printf("%d\n", ft_var_len(check->env[j], '='));
 					free(check->env[j]);
 					check->env[j] = ft_strdup(check->coms[0].pr[i]);
 					break ;
@@ -505,5 +564,10 @@ int		main(int argc, char **argv, char **envp)
 		//status = exec_args(&check);
 		free_args(&check);
 	}
+	// if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
+	// {
+	// 	exit(0);
+	// return (0);
+	// }
 	return (0);
 }
