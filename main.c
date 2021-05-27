@@ -79,9 +79,9 @@ char **ft_delete_env_var(int k, char **env)
 			newenv[i] = ft_strdup(temp.env[j]);
 			i++;
 		}
-		++j;
+		j++;
 	}
-	newenv[j] = NULL;
+	newenv[i] = NULL;
 	j = 0;
 	while(temp.env[j])
 	{
@@ -89,10 +89,10 @@ char **ft_delete_env_var(int k, char **env)
 		++j;
 	}
 	free(temp.env);
-	return newenv;
+	return (newenv);
 }
 
-int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
+int to_unset(t_checks *check) // mer unsetn a kayfot funkcia a
 {
 	int i;
 	int j;
@@ -111,10 +111,9 @@ int to_unset(t_checks *check) // de unseti hmar hla vor petqa exportn ashkhatel
 			{
 				if (!ft_strncmp(check->env[j], check->coms[0].pr[i], ft_var_len(check->env[j], '=')))
 				{
-					//free(check->env[j]);
-					//check->env[j] = NULL;
+					// free(check->env[j]);
+					// check->env[j] = NULL;
 					check->env = ft_delete_env_var(j, check->env);
-					//break ;
 				}
 				j++;
 			}
@@ -150,7 +149,7 @@ char **ft_add_env_var(char *str, char **env)
 	while(env[j])
 	{
 		free(env[j]);
-		++j;
+		j++;
 	}
 	free(env);
 	newenv = malloc((i + 1) * sizeof(char *));
