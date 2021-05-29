@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/26 15:12:31 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/29 23:50:09 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,14 +338,14 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 	return (n);
 }
 
-int		word_count_base(char *line, t_checks *check, char *base, int num)  //complete I think, stuguma qani process es pass arel
+int		word_count_base(char *line, t_checks *check, char *base, int num)  //complete I think. Word count
 {
 	int i;
 	int n;
 
 	n = 1;
 	i = 0;
-	while (i < num - 1)
+	while (i < num)
 	{
 		if (!check->dquote && line[i] == '\'')  //quote-handled
 			check->quote = !check->quote;
@@ -371,41 +371,81 @@ int		word_count_base(char *line, t_checks *check, char *base, int num)  //comple
 
 // }
 
-void ft_trim_quotes(char *str) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
+int		ft_get_var(char **envp, char *str, char **buff)
 {
 	int i;
-	int q;
-	int dq;
-	int j;
-	char *buff;
+	int z;
+	char *tmp;
 
-	j = 0;
+	i = 1;
+//	if(ft_isdigit(str[i]))
+		//error;
+	while(ft_isalnum(str[i]) || str[i] == '_')
+		i++;
+	if(i == 1)
+		*buff = ft_strjoin(*buff, "$");
+	if(i == 1)
+		return(1);
+	tmp = malloc(sizeof(char) * (i + 1));
+	tmp = ft_substr(str, 1, i - 1);
+	tmp = ft_strjoin(tmp, "=");
+	z = 0;
+	while(envp[z])
+	{
+		if(!ft_strncmp(tmp, envp[z], i))
+		{
+			free(tmp);
+			tmp = ft_strdup(envp[z] + i);
+			break;
+		}
+		z++;
+	}
+	*buff = ft_strjoin(*buff, tmp);
+	free(tmp);
+	return (i);
+}
+
+void ft_trim_quotes(char *str, t_checks *check) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
+{
+	int i;
+	char *buff;
+	char *tmp;
+
 	i = 0;
-	q = 0;
-	dq = 0;
-	buff = malloc(sizeof(char) * ft_strlen(str));
+	tmp = malloc(sizeof(char) * 2);
+	tmp[1] = '\0';
+	buff = malloc(sizeof(char));
+	buff[0] = '\0';
 	while(str[i])
 	{
-		if(!dq && str[i] == '\'')
+		if(!check->dquote && str[i] == '\'')
 		{
-			q = !q;
+			check->quote = !check->quote;
 			i++;
 			continue;
 		}
-		if(!q && str[i] == '\"')
+		if(!check->quote && str[i] == '\"')
 		{
-			dq = !dq;
+			check->dquote = !check->dquote;
 			i++;
 			continue;
 		}
-		buff[j] = str[i];
+		// printf("c: %c  q: %d\n", str[i], check->quote);
+		if((str[i] == '$') && !check->quote)
+		{
+			i += ft_get_var(check->env, str + i, &buff);
+			continue ;
+		}
+		tmp[0] = str[i];
+		buff = ft_strjoin(buff, tmp);
 		i++;
-		j++;
 	}
+	// printf("buff = %s\n", buff);
 	free(str);
 	str = ft_strdup(buff);
 	free(buff);
 }
+
 
 void		get_process(char *line, int n, t_checks *check, int j)
 {
@@ -426,7 +466,8 @@ void		get_process(char *line, int n, t_checks *check, int j)
 		while (ft_check_char(SPACES, line[i]))
 			i++;
 		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
-		ft_trim_quotes(check->coms[j].pr[z]);
+		// printf("process: %s\n", check->coms[j].pr[z]);
+		ft_trim_quotes(check->coms[j].pr[z], check);
 		i += ft_word_len(line + i);
 		z++;
 	}
