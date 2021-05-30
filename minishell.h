@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 16:21:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/05/25 12:31:50 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/31 02:49:53 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@
 
 typedef	struct	s_process
 {
-	char	**pr; //process name
+	char	**pr; //process name and args
 	int		fd[2]; //input output for pipe
-	char	lsep; //left seperator
-	char	rsep; //right seperator 
+	int		lsep; //left seperator     0 - chka kam ';'   1 - '|'   2 - '>'    3 - '>>'    4 - '<'
+	int		rsep; //right seperator 
 	int		rtnv; //process return value
 }				t_process;
 
@@ -45,11 +45,6 @@ typedef struct	s_checks
 	int			is_process; //stuguma arajin barna te che
 	int			quote; //stuguma ' baca te che
 	int			dquote; //stuguma " baca te che
-	int			pipe; //stuguma | ka te che ??
-	int			scolon; //stuguma ; ka te che ??
-	int			great; //stuguma > ka te che ??
-	int			less; //stuguma < ka te che ??
-	int			redir; //stuguma >> ka te che??
 	int			index; //petqa vor haskananq parsingi vaxt ura hasel
 	t_process	*coms; //mer commandnerna 
 	char		**env; //mer popoxakannerna $

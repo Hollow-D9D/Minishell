@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/29 23:50:09 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/05/31 03:36:26 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,10 +366,20 @@ int		word_count_base(char *line, t_checks *check, char *base, int num)  //comple
 	return (n);
 }
 
-// void		give_seperator(t_checks *check)
-// {
-
-// }
+void		get_sep(char *sep, t_checks *check, int j, int i)
+{
+	if(sep[0] == '>' && sep[1] == '>')
+		check->coms[j].rsep = 3;
+	else if(sep[0] == '>')
+		check->coms[j].rsep = 2;
+	else if(sep[0] == '|')
+		check->coms[j].rsep = 1;
+	else if(sep[0] == '<')
+		check->coms[j].rsep = 4;
+	else
+		check->coms[j].rsep = 0;
+	check->coms[i].lsep = check->coms[j].rsep;
+}
 
 int		ft_get_var(char **envp, char *str, char **buff)
 {
@@ -400,17 +410,20 @@ int		ft_get_var(char **envp, char *str, char **buff)
 		}
 		z++;
 	}
-	*buff = ft_strjoin(*buff, tmp);
+	if(tmp[ft_strlen(tmp) - 1] != '=')
+		*buff = ft_strjoin(*buff, tmp);
 	free(tmp);
 	return (i);
 }
 
-void ft_trim_quotes(char *str, t_checks *check) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
+void ft_trim_quotes(char **arg, t_checks *check) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
 {
 	int i;
 	char *buff;
 	char *tmp;
+	char *str;
 
+	str = *arg;
 	i = 0;
 	tmp = malloc(sizeof(char) * 2);
 	tmp[1] = '\0';
@@ -440,12 +453,12 @@ void ft_trim_quotes(char *str, t_checks *check) //done test ara vorovhetev truci
 		buff = ft_strjoin(buff, tmp);
 		i++;
 	}
-	// printf("buff = %s\n", buff);
-	free(str);
+	free(tmp);
+	free(*arg);
 	str = ft_strdup(buff);
+	*arg = str;
 	free(buff);
 }
-
 
 void		get_process(char *line, int n, t_checks *check, int j)
 {
@@ -467,10 +480,14 @@ void		get_process(char *line, int n, t_checks *check, int j)
 			i++;
 		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
 		// printf("process: %s\n", check->coms[j].pr[z]);
-		ft_trim_quotes(check->coms[j].pr[z], check);
+		ft_trim_quotes(&check->coms[j].pr[z], check);
 		i += ft_word_len(line + i);
 		z++;
 	}
+	if(check->argc == j)
+		get_sep(line + n, check, j, j);
+	else
+		get_sep(line + n, check, j, j + 1);
 }
 
 void	parse_args(t_checks *check, char *line)
@@ -509,11 +526,7 @@ void	zero_checks(t_checks *check)
 	check->is_process = 0;
 	check->quote = 0;
 	check->dquote = 0;
-	check->pipe = 0;
-	check->redir = 0;
-	check->great = 0;
-	check->less = 0;
-	check->scolon = 0;
+	check->sep = 0;
 }
 
 int execute(t_checks *check)
