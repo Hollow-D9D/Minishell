@@ -13,7 +13,7 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# include "libft/libft.h"
+# include "../libft/libft.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <fcntl.h>
@@ -45,11 +45,7 @@ typedef struct	s_checks
 	int			is_process; //stuguma arajin barna te che
 	int			quote; //stuguma ' baca te che
 	int			dquote; //stuguma " baca te che
-	int			pipe; //stuguma | ka te che ??
-	int			scolon; //stuguma ; ka te che ??
-	int			great; //stuguma > ka te che ??
-	int			less; //stuguma < ka te che ??
-	int			redir; //stuguma >> ka te che??
+	int			rtn;
 	int			index; //petqa vor haskananq parsingi vaxt ura hasel
 	t_process	*coms; //mer commandnerna 
 	char		**env; //mer popoxakannerna $
@@ -58,15 +54,14 @@ typedef struct	s_checks
 int 	main(int argc, char **argv, char **envp);
 void 	my_int(int number);
 void 	my_quit(int number);
-int 	to_cd(t_checks *check);
-int 	to_exit(t_checks *check);
-int 	to_pwd(t_checks *check);
-int 	to_echo(t_checks *check);
-int 	to_env(t_checks *check);
-int 	to_export(t_checks *check);
-int 	to_unset(t_checks *check);
+int 	to_cd(t_checks *check, int p);
+int 	to_exit(t_checks *check, int p);
+int 	to_pwd(t_checks *check, int p);
+int 	to_echo(t_checks *check, int p);
+int 	to_env(t_checks *check, int p);
+int 	to_export(t_checks *check, int p);
+int 	to_unset(t_checks *check, int p);
 void 	init_envp(char **envp, t_checks *check);
 int 	ft_var_len(char *str, char c);
-int 	to_other(t_checks *check);
 
 #endif

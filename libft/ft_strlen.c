@@ -17,6 +17,8 @@ unsigned long	ft_strlen(const char *s)
 	unsigned long i;
 
 	i = 0;
+	if (!s)
+		return (i);
 	while (s[i])
 		i++;
 	return (i);

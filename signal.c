@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "./includes/minishell.h"
 
 void	my_quit(int sig) // test ara /bin/sleep[varkyan]/ hramanov u ctrl \ ara
 {
