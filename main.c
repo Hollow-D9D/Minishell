@@ -31,7 +31,8 @@ char *builtin_str[] =
 	"echo",
 	"env",
 	"export",
-	"unset"
+	"unset",
+	"$?"
 };
 
 int (*builtin_func[]) (t_checks *) = {
@@ -41,7 +42,8 @@ int (*builtin_func[]) (t_checks *) = {
 	&to_echo,
 	&to_env,
 	&to_export,
-	&to_unset
+	&to_unset,
+	&to_other
 };
 
 int builtins_count() 
@@ -53,6 +55,17 @@ int		ft_export_char(int c)
 {
 	if ((c >= '0' && c <= '9') || (c > 95 && c < 123) || (c > 64 && c < 91) || (c == 61)) // 61 havasarena
 		return (1);
+	return (0);
+}
+
+int to_other(t_checks *check)
+{
+	(void)check;
+
+	write(1, "Shell> ", 7);
+	ft_putstr("command not found: ");
+	ft_putstr("\n");
+
 	return (0);
 }
 
@@ -630,10 +643,10 @@ int		main(int argc, char **argv, char **envp)
 		//status = exec_args(&check);
 		free_args(&check);
 	}
-	// if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
-	// {
-	// 	exit(0);
-	// return (0);
-	// }
+	if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
+	{
+		exit(0);
+	return (0);
+	}
 	return (0);
 }

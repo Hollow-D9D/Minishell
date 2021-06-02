@@ -20,8 +20,7 @@ void	my_quit(int sig) // test ara /bin/sleep[varkyan]/ hramanov u ctrl \ ara
 	(void)sig;
 	pid = waitpid(-1, &status, WNOHANG); // -1     означает ожидать любого дочернего процесса; функция wait ведет себя точно так же.
 	if (!pid)							// означает вернуть управление немедленно, если ни один дочерний процесс  не  завершил выполнение.
-	
-		write(1, "Quit: 3", 7);
+		write(1, "Quit: 3\n", 8);
 }
 
 void	my_int(int sig)

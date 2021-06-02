@@ -116,4 +116,6 @@ int				ft_toupper(int c);
 
 int				ft_strcmp(char *s1, char *s2);
 
+void			ft_putstr(char *str);
+
 #endif

@@ -67,5 +67,6 @@ int 	to_export(t_checks *check);
 int 	to_unset(t_checks *check);
 void 	init_envp(char **envp, t_checks *check);
 int 	ft_var_len(char *str, char c);
+int 	to_other(t_checks *check);
 
 #endif
