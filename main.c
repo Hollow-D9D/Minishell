@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/05/29 23:50:09 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/02 14:32:03 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -426,12 +426,14 @@ int		ft_get_var(char **envp, char *str, char **buff)
 	return (i);
 }
 
-void ft_trim_quotes(char *str, t_checks *check) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
+void ft_trim_quotes(char **str1, t_checks *check) //done test ara vorovhetev trucik em nayel, norme chi ancnum mek el
 {
 	int i;
 	char *buff;
 	char *tmp;
+	char *str;
 
+	str = *str1;
 	i = 0;
 	tmp = malloc(sizeof(char) * 2);
 	tmp[1] = '\0';
@@ -461,9 +463,10 @@ void ft_trim_quotes(char *str, t_checks *check) //done test ara vorovhetev truci
 		buff = ft_strjoin(buff, tmp);
 		i++;
 	}
+	free(tmp);
 	// printf("buff = %s\n", buff);
-	free(str);
-	str = ft_strdup(buff);
+	free(*str1);
+	*str1 = ft_strdup(buff);
 	free(buff);
 }
 
@@ -488,7 +491,7 @@ void		get_process(char *line, int n, t_checks *check, int j)
 			i++;
 		check->coms[j].pr[z] = ft_substr(line, i, ft_word_len(line + i));
 		// printf("process: %s\n", check->coms[j].pr[z]);
-		ft_trim_quotes(check->coms[j].pr[z], check);
+		ft_trim_quotes(&check->coms[j].pr[z], check);
 		i += ft_word_len(line + i);
 		z++;
 	}
