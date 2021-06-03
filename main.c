@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/02 14:32:03 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/04 00:34:44 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,7 @@ void ft_trim_quotes(char **str1, t_checks *check) //done test ara vorovhetev tru
 	free(buff);
 }
 
-int		ft_give_sep(char *str, t_checks *check, int j)
+int		ft_give_sep(char *str, t_checks *check, int j) // ; null = 0 >> = 3 > = 4 | = 1 < = 2 
 {
 	if ((str[0] != '>' && ft_check_char(SEPERATORS, str[1])))
 	{
@@ -257,13 +257,13 @@ int		ft_give_sep(char *str, t_checks *check, int j)
 	if (str[0] == ';' || !str[0])
 		check->coms[j].rsep = 0;
 	else if (str[0] == '>' && str[1] == '>')
-		check->coms[j].rsep = 2;
-	else if (str[0] == '>')
-		check->coms[j].rsep = 1;
-	else if (str[0] == '|')
 		check->coms[j].rsep = 3;
-	else if (str[0] == '<')
+	else if (str[0] == '>')
 		check->coms[j].rsep = 4;
+	else if (str[0] == '|')
+		check->coms[j].rsep = 1;
+	else if (str[0] == '<')
+		check->coms[j].rsep = 2;
 	if ((j + 1) != check->argc)
 		check->coms[j + 1].lsep = check->coms[j].rsep;
 	return (0);
@@ -380,7 +380,6 @@ int builtin(t_checks *check)
 				check->rtn = (*builtin_func[i])(check, j);
 				if (j + 1 == check->argc)
 					return (0);
-				i++;
 				break ;
 			}
 			i++;
@@ -391,6 +390,22 @@ int builtin(t_checks *check)
 	}
 	return (0);
 }
+
+void	treat_files(t_checks *check)
+{
+	int fd;
+	int i;
+
+	i = 0;
+	while (i < argc)
+	{
+		if(check->coms[i].lsep == 2 || check->coms[i].rsep > 2)
+			
+	}
+
+}
+
+void	close_files(t_checks *check)
 
 int		main(int argc, char **argv, char **envp)
 {
@@ -412,7 +427,8 @@ int		main(int argc, char **argv, char **envp)
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		get_next_line(0, &line); //input 
-		parse_args(&check, line); // parse lines 
+		parse_args(&check, line); // parse lines
+		treat_files(&check);
 		builtin(&check);
 		//status = exec_args(&check);
 		free_args(&check);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gamirjan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:28:10 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/03 15:28:12 by gamirjan         ###   ########.fr       */
+/*   Updated: 2021/06/04 00:15:49 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ int to_exit(t_checks *check, int p)
 {
 	(void)check;
 	p = 0;
-	exit(1);
+	exit(0);
 }
 
 void	ft_change_pwd(t_checks *check, char *buff)
@@ -107,5 +107,5 @@ int to_cd(t_checks *check, int p)
   	}
   	getcwd(buff, 1024);
   	ft_change_pwd(check, buff);
-  	return (1);
+  	return (0);
 }
