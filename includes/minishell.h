@@ -63,5 +63,10 @@ int 	to_export(t_checks *check, int p);
 int 	to_unset(t_checks *check, int p);
 void 	init_envp(char **envp, t_checks *check);
 int 	ft_var_len(char *str, char c);
+void	ft_change_pwd(t_checks *check, char *buff);
+char 	**ft_delete_env_var(int k, char **env);
+char 	**ft_add_env_var(char *str, char **env);
+void 	init_envp(char **envp, t_checks *check);
+int		ft_export_char(int c);
 
 #endif

@@ -11,6 +11,8 @@ CFLAGS		=	-Werror -Wall -Wextra -g -I $(HEADER) #-fsanitize=address
 
 SRCS		=	main.c \
 				signal.c \
+				export_env_unset.c \
+				builtins.c \
 
 OBJS		=	$(SRCS:.c=.o)
 
