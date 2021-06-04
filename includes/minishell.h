@@ -70,5 +70,7 @@ char 	**ft_delete_env_var(int k, char **env);
 char 	**ft_add_env_var(char *str, char **env);
 void 	init_envp(char **envp, t_checks *check);
 int		ft_export_char(int c);
+void	create_file(t_process *pr);
+void	treat_files(t_checks *check);
 
 #endif

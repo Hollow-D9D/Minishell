@@ -13,6 +13,7 @@ SRCS		=	main.c \
 				signal.c \
 				export_env_unset.c \
 				builtins.c \
+				redirections.c\
 
 OBJS		=	$(SRCS:.c=.o)
 
