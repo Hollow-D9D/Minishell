@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/04 00:34:44 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/04 15:47:17 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,21 +391,32 @@ int builtin(t_checks *check)
 	return (0);
 }
 
+void	create_file(t_process *pr)
+{
+	if (pr->lsep == 2)
+		pr->file_d = open(pr->pr[0], O_RDONLY, 0644);
+	else if (pr->lsep == 3)
+		pr->file_d = open(pr->pr[0], O_CREAT | O_WRONLY | O_APPEND, 0644);
+	else if (pr->lsep == 4)
+		pr->file_d = open(pr->pr[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+}
+
 void	treat_files(t_checks *check)
 {
-	int fd;
+	// int fd;
 	int i;
 
 	i = 0;
-	while (i < argc)
+	while (i < check->argc)
 	{
-		if(check->coms[i].lsep == 2 || check->coms[i].rsep > 2)
-			
+		if(check->coms[i].lsep >= 2)
+			create_file(&check->coms[i]);
+		i++;
 	}
 
 }
 
-void	close_files(t_checks *check)
+// void	close_files(t_checks *check)
 
 int		main(int argc, char **argv, char **envp)
 {

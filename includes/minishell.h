@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 16:21:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/05/25 12:31:50 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/04 15:36:44 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@ typedef	struct	s_process
 {
 	char	**pr; //process name
 	int		fd[2]; //input output for pipe
+	int		file_d;
+	char	is_process;
 	char	lsep; //left seperator
 	char	rsep; //right seperator 
 	int		rtnv; //process return value
