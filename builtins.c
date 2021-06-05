@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:28:10 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/04 00:15:49 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/05 16:01:42 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ int to_echo(t_checks *check, int p)
 	i = 1;
 	if (!check->coms[p].pr[1])
 	{
-		write (1, "\n", 1);
+		write (check->coms[p].file_d, "\n", 1);
 		return (0);
 	}
 	if (ft_strcmp(check->coms[p].pr[1], "-n") == 0)
@@ -32,7 +32,7 @@ int to_echo(t_checks *check, int p)
 	while(check->coms[p].pr[i])
 	{
 		write(1, check->coms[p].pr[i], ft_strlen(check->coms[p].pr[i]));
-		write(1, " ", 1);
+		write(check->coms[p].file_d, " ", 1);
 		i++;
 	}
 	if (!nflag)
@@ -40,14 +40,29 @@ int to_echo(t_checks *check, int p)
 	return (0);
 }
 
+void check_sep(char *buff, t_checks *check, int p)
+{
+	if (!check->coms[p + 1].is_process)
+	{
+		if (check->coms[p + 1].lsep == 4)
+			write(check->coms[p + 1].file_d, buff, ft_strlen(buff));
+		else if (check->coms[p + 1].lsep == 3)
+			write(check->coms[p + 1].file_d, buff, ft_strlen(buff));
+	}
+	return ;
+}
+
 int to_pwd(t_checks *check, int p)
 {
-	
-	(void)p;
+	int i;
+
 	(void)check;
 	char buffer[1024];
 	getcwd(buffer, 1024);
-	printf("%s\n", buffer);
+	i = ft_strlen(buffer);
+	buffer[i] = '\n';
+	buffer[++i] = '\0';
+	check_sep(buffer, check, p);
 	return (0);
 }
 

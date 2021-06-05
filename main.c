@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/04 15:47:17 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/05 16:00:15 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,6 +283,7 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
 	check->coms[j].pr[num] = NULL;
 	z = 0;
+	check->coms[j].is_process = 1;
 	while(z < num)
 	{
 		while (ft_check_char(SPACES, line[i]))
@@ -294,6 +295,7 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	}
 	if(ft_give_sep(line + n, check, j))
 		return ;
+	pipe(check->coms[j].fd);
 }
 
 void	parse_args(t_checks *check, char *line)
@@ -372,26 +374,41 @@ int builtin(t_checks *check)
 	j = 0;
 	while(j < check->argc)
 	{
-		i = 0;
-		while (i < builtins_count())
+		if(check->coms[j].is_process)
 		{
-			if (ft_strcmp(check->coms[j].pr[0], builtin_str[i]) == 0)
+			i = 0;
+			while (i < builtins_count())
 			{
-				check->rtn = (*builtin_func[i])(check, j);
-				if (j + 1 == check->argc)
-					return (0);
-				break ;
+				if (check->coms[j].is_process)
+					if (ft_strcmp(check->coms[j].pr[0], builtin_str[i]) == 0)
+					{
+						check->rtn = (*builtin_func[i])(check, j);
+						if (j + 1 == check->argc)
+							return (0);
+						break ;
+					}
+				i++;
 			}
-			i++;
+			if (i == builtins_count())
+				execute(check, j);
 		}
-		if (i == builtins_count())
-			execute(check, j);
 		j++;
 	}
 	return (0);
 }
 
-// void	close_files(t_checks *check)
+void	close_files(t_checks *check)
+{
+	int i;
+
+	i = 0;
+	while (i < check->argc)
+	{
+		if(!check->coms[i].is_process)
+			close(check->coms[i].file_d);
+		i++;
+	}
+}
 
 int		main(int argc, char **argv, char **envp)
 {
@@ -417,6 +434,7 @@ int		main(int argc, char **argv, char **envp)
 		treat_files(&check);
 		builtin(&check);
 		//status = exec_args(&check);
+		close_files(&check);
 		free_args(&check);
 	}
 	if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
