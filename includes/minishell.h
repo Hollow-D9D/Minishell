@@ -72,5 +72,16 @@ void 	init_envp(char **envp, t_checks *check);
 int		ft_export_char(int c);
 void	create_file(t_process *pr);
 void	treat_files(t_checks *check);
+void 	my_errno(int err);
+void	zero_checks(t_checks *check);
+void	parse_args(t_checks *check, char *line);
+void	get_process(char *line, int n, t_checks *check, int j);
+int		word_count_base(char *line, t_checks *check, char *base, int num);
+int		arg_count_base(char *line, t_checks *check, char *base);
+int		ft_give_sep(char *str, t_checks *check, int j);
+void 	ft_trim_quotes(char **str1, t_checks *check);
+int		ft_get_var(char **envp, char *str, char **buff);
+int		ft_check_rtn(char *str, char **buff, t_checks *check);
+int 	ft_word_len(char *line);
 
 #endif

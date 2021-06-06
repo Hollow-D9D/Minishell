@@ -35,8 +35,10 @@ int to_echo(t_checks *check, int p)
 		write(check->coms[p].file_d, " ", 1);
 		i++;
 	}
+	//my_errno(0); // read my_errno
 	if (!nflag)
 		write(1, "\n", 1);
+	//my_errno(0); // read my_errno
 	return (0);
 }
 
@@ -59,10 +61,12 @@ int to_pwd(t_checks *check, int p)
 	(void)check;
 	char buffer[1024];
 	getcwd(buffer, 1024);
+	//printf("%s\n", buffer);
 	i = ft_strlen(buffer);
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
 	check_sep(buffer, check, p);
+	//my_errno(0); // read my_errno
 	return (0);
 }
 

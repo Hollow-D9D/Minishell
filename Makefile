@@ -14,6 +14,9 @@ SRCS		=	main.c \
 				export_env_unset.c \
 				builtins.c \
 				redirections.c\
+				my_errno.c \
+				parsing.c \
+				seperators.c \
 
 OBJS		=	$(SRCS:.c=.o)
 
