@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:28:10 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/05 16:01:42 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/06 19:42:45 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,8 @@ void check_sep(char *buff, t_checks *check, int p)
 	{
 		if (check->coms[p + 1].lsep == 4)
 			write(check->coms[p + 1].file_d, buff, ft_strlen(buff));
-		else if (check->coms[p + 1].lsep == 3)
-			write(check->coms[p + 1].file_d, buff, ft_strlen(buff));
+		else
+			write(1, buff, ft_strlen(buff));
 	}
 	return ;
 }
@@ -65,6 +65,7 @@ int to_pwd(t_checks *check, int p)
 	i = ft_strlen(buffer);
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
+	printf("valod11\n");
 	check_sep(buffer, check, p);
 	//my_errno(0); // read my_errno
 	return (0);

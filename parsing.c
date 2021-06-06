@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gamirjan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/06 11:26:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/06 11:26:30 by gamirjan         ###   ########.fr       */
+/*   Updated: 2021/06/06 20:35:36 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,9 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 {
 	int i;
 	int n;
+	int flag;
 
+	flag = 0;
 	n = 1;
 	i = 0;
 	while (line[i])
@@ -27,8 +29,14 @@ int		arg_count_base(char *line, t_checks *check, char *base)  //complete I think
 			check->dquote = !check->dquote;
 		if (!check->dquote && !check->quote)
 		{
-			if (ft_check_char(base, line[i]))
+			while (ft_check_char(base, line[i]))
+			{
+				flag = 1;
+				i++;
+			}
+			if (flag)
 				n++;
+			flag = 0;
 		}
 		i++;
 	}
