@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:28:10 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/06 19:42:45 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/08 00:06:17 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,17 +51,25 @@ int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima 
 void check_sep(char *buff, t_checks *check, int p)
 {
 	int i;
+	int fl;
 
+	fl = 0;
 	i = p;
-	while (!check->coms[i + 1].is_process)
+	while (i < check->argc && !check->coms[i + 1].is_process)
 	{
 		if (check->coms[i + 1].lsep > 2)
+		{
 			write(check->coms[i + 1].file_d, buff, ft_strlen(buff));
-		else
+			fl = 1;
+		}
+		else if (!fl)
+		{
 			write(1, buff, ft_strlen(buff));
+			fl = 1;
+		}
 		i++;
 	}
-	if (i == p)
+	if (i == p && !fl)
 		write(1, buff, ft_strlen(buff));
 	return ;
 }
