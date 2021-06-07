@@ -12,45 +12,57 @@
 
 #include "./includes/minishell.h"
 
-int to_echo(t_checks *check, int p)
+void check_sep(char *buff, t_checks *check, int p);
+
+int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima ashxatuma idealakan karcem
 {
 	int i;
 	int nflag;
+	char *str; // inch@ vor petqa tpi sarquma string u uxarkuma en check_sep
 
+	str = malloc(sizeof(char));
+	str[0] = 0;
 	nflag = 0;
 	i = 1;
-	if (!check->coms[p].pr[1])
-	{
-		write (check->coms[p].file_d, "\n", 1);
-		return (0);
-	}
-	if (ft_strcmp(check->coms[p].pr[1], "-n") == 0)
+//	if (check->coms[p].pr[1])
+//	{
+//		write (check->coms[p].file_d, "\n", 1);
+//		return (0);
+//	}
+	if (check->coms[p].pr[1] && ft_strcmp(check->coms[p].pr[1], "-n") == 0)
 	{
 		i++;
 		nflag = 1;
 	}
 	while(check->coms[p].pr[i])
 	{
-		write(1, check->coms[p].pr[i], ft_strlen(check->coms[p].pr[i]));
-		write(check->coms[p].file_d, " ", 1);
+		str = ft_strjoin(str, check->coms[p].pr[i]);
+		str = ft_strjoin(str, " ");
 		i++;
 	}
 	//my_errno(0); // read my_errno
 	if (!nflag)
-		write(1, "\n", 1);
+		str = ft_strjoin(str, "\n");
+	check_sep(str, check, p);
 	//my_errno(0); // read my_errno
 	return (0);
 }
 
 void check_sep(char *buff, t_checks *check, int p)
 {
-	if (!check->coms[p + 1].is_process)
+	int i;
+
+	i = p;
+	while (!check->coms[i + 1].is_process)
 	{
-		if (check->coms[p + 1].lsep == 4)
-			write(check->coms[p + 1].file_d, buff, ft_strlen(buff));
+		if (check->coms[i + 1].lsep > 2)
+			write(check->coms[i + 1].file_d, buff, ft_strlen(buff));
 		else
 			write(1, buff, ft_strlen(buff));
+		i++;
 	}
+	if (i == p)
+		write(1, buff, ft_strlen(buff));
 	return ;
 }
 
@@ -61,11 +73,9 @@ int to_pwd(t_checks *check, int p)
 	(void)check;
 	char buffer[1024];
 	getcwd(buffer, 1024);
-	//printf("%s\n", buffer);
 	i = ft_strlen(buffer);
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
-	printf("valod11\n");
 	check_sep(buffer, check, p);
 	//my_errno(0); // read my_errno
 	return (0);
@@ -75,7 +85,7 @@ int to_exit(t_checks *check, int p)
 {
 	(void)check;
 	p = 0;
-	exit(0);
+	exit(p);
 }
 
 void	ft_change_pwd(t_checks *check, char *buff)

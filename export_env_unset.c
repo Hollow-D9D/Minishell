@@ -168,18 +168,22 @@ int to_export(t_checks *check, int p)
 	return (0);
 }
 
-int to_env(t_checks *check, int p) // mer envna ughaki malloci pah@ garlakhaca
+int to_env(t_checks *check, int p) // mer envna ughaki malloci pah@ garlakhaca  output rediercted correctly inch vor anasun errora berum erb vor mi 5 hat file em talis, chgitem der inchica
 {
 	int i;
 	i = 0;
+	char *str;
 
 	(void)p;
+	str = malloc(sizeof(char));
+	str[0] = 0;
 	while (check->env[i])
 	{
-		write(1, check->env[i], ft_strlen(check->env[i]));
-		write(1, "\n", 1);
+		str = ft_strjoin(str, check->env[i]);
+		str = ft_strjoin(str, "\n");
 		i++;
 	}
+	check_sep(str, check, p);
 	return (0);
 }
 

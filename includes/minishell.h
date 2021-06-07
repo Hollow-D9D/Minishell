@@ -83,5 +83,5 @@ void 	ft_trim_quotes(char **str1, t_checks *check);
 int		ft_get_var(char **envp, char *str, char **buff);
 int		ft_check_rtn(char *str, char **buff, t_checks *check);
 int 	ft_word_len(char *line);
-
+void	check_sep(char *buff, t_checks *check, int p);
 #endif

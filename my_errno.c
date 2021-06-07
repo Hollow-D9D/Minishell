@@ -26,4 +26,5 @@ inq@ voroshuma mer error number@ indz tvuma iran arji inch vor mi hat popoxakan 
 mej pahel u an@ndhat free anel, u poxel kaxvac gorcoghutyunic, u amen angam erb $?
 lini inq@ nor tpi mer errornumber@
 
+glxavor structi mej hatuk int ka vor karanq grenq check->rtn = my_errno(err);
 */

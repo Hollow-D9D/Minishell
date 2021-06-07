@@ -85,11 +85,9 @@ void	free_args(t_checks *check)
 	int j;
 
 	i = 0;
-	printf("%d\n", check->argc);
 	while(i < check->argc)
 	{
 		j = 0;
-		printf("free_args %d\n", i);
 		while(check->coms[i].pr[j])
 		{
 			free(check->coms[i].pr[j]);
@@ -100,7 +98,7 @@ void	free_args(t_checks *check)
 	free(check->coms);
 }
 
-int execute(t_checks *check, int j)
+int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum, tencel petqa mez?
 {
 	pid_t pid;
 	int status;
@@ -110,13 +108,13 @@ int execute(t_checks *check, int j)
   	{
     	if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     	{
-      		perror("error ara");
+      		perror("exec failed");
     	}
     	exit(EXIT_FAILURE);
   	} 
   	else if (pid < 0) 
   	{
-   		perror("error ara");
+   		perror("negative pid");
   	} 
   	else 
   	{
@@ -147,7 +145,6 @@ int builtin(t_checks *check)
 				if (check->coms[j].is_process)
 					if (ft_strcmp(check->coms[j].pr[0], builtin_str[i]) == 0)
 					{
-						// printf("Lia\n");
 						check->rtn = (*builtin_func[i])(check, j);
 						if (j + 1 == check->argc)
 							return (0);
@@ -174,7 +171,6 @@ void	close_files(t_checks *check)
 			close(check->coms[i].file_d);
 		i++;
 	}
-	printf("close_c\n");
 }
 
 int		main(int argc, char **argv, char **envp)
@@ -199,9 +195,7 @@ int		main(int argc, char **argv, char **envp)
 		get_next_line(0, &line); //input 
 		parse_args(&check, line); // parse lines
 		treat_files(&check);
-		printf("valod\n");
 		builtin(&check);
-		printf("valod\n");
 		//status = exec_args(&check);
 		close_files(&check);
 		free_args(&check);
