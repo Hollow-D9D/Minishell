@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/06 19:51:08 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/08 13:25:51 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,17 +104,46 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 {
 	pid_t pid;
 	int status;
+	int i;
+	int fl;
 
-	pid = fork();
-	if (pid == 0) 
-  	{
-    	if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
+	fl = 0;
+	i = j;
+	while(i < check->argc && !check->coms[i + 1].is_process)
+    {
+		pid = fork();
+		if (pid == 0) 
+  		{
+  			if (check->coms[j].pr[1])
+  				check_input_redir()
+  			check_output_redir();
+  			if (check->coms[j].pr[1])
+  			{
+  				if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
+    			{
+    				my_errno(errno, check);
+       				perror("exec failed");
+    			}
+    			exit(EXIT_SUCCESS);
+    		}
+    		fl = 1;
+    		if (check->coms[i + 1].lsep == 2)
+    			dup2(check->coms[i + 1].file_d, STDIN_FILENO);
+ 			else if (check->coms[i + 1].lsep > 2)
+ 				dup2(check->coms[i + 1].file_d, STDOUT_FILENO);
+    		if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
+    		{
+    			my_errno(errno, check);
+       			perror("exec failed");
+    		}
+    	if (!fl && execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     	{
     		my_errno(errno, check);
        		perror("exec failed");
     	}
+    	close(STDIN_FILENO);
     	exit(EXIT_FAILURE);
-  	} 
+  		}
   	else if (pid < 0) 
   	{
    		perror("negative pid");
@@ -127,9 +156,12 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
               									//статусе еще не было сообщено.
    		}
     	while (!WIFEXITED(status) && !WIFSIGNALED(status)); // WIFEXITED(status) не равно нулю, если дочерний процесс нормально завершился.	// 
-  } 													//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за
- 															//неперехваченного сигнала.
-  return (1);
+  		if (check->coms[j].pr[1])
+  			break;
+  	}
+  	i++; 													//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за
+ 	}										//неперехваченного сигнала.
+  return (0);
 }
 
 int builtin(t_checks *check)
