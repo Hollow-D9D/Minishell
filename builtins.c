@@ -99,11 +99,22 @@ int to_exit(t_checks *check, int p)
 void	ft_change_pwd(t_checks *check, char *buff)
 {
 	int i;
+	int j;
 	char *tmp;
 
 	i = 0;
+	j = 0;
 	while(check->env[i] && ft_strncmp("PWD=", check->env[i], 4))
 		i++;
+	while(check->env[j] && ft_strncmp("OLDPWD=", check->env[j], 7))
+		j++;
+	// u ste stugi arkayutyan depqum mi hat envi i n ta envi j in
+	if (check->env[i] && check->env[j])
+	{
+		free(check->env[j]);
+		check->env[j] = ft_strdup("OLDPWD=");
+		check->env[j] = ft_strjoin(check->env[j], check->env[i]);
+	}
 	if (check->env[i])
 	{
 		free(check->env[i]);
