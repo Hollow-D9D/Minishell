@@ -231,7 +231,9 @@ int		main(int argc, char **argv, char **envp)
 	{
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
-		get_next_line(0, &line); //input 
+		n = get_next_line(0, &line); //input 
+		if (!n)
+			exit(1);
 		parse_args(&check, line); // parse lines
 		treat_files(&check);
 		builtin(&check);
