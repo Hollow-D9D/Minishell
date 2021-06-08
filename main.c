@@ -20,7 +20,8 @@ char *builtin_str[] =
 	"echo",
 	"env",
 	"export",
-	"unset"
+	"unset",
+	"error"
 };
 
 int (*builtin_func[]) (t_checks *, int) = {
@@ -30,7 +31,8 @@ int (*builtin_func[]) (t_checks *, int) = {
 	&to_echo,
 	&to_env,
 	&to_export,
-	&to_unset
+	&to_unset,
+	&to_error
 };
 
 int builtins_count() 
@@ -108,7 +110,8 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	{
     	if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     	{
-      		perror("exec failed");
+    		my_errno(errno, check);
+       		perror("exec failed");
     	}
     	exit(EXIT_FAILURE);
   	} 
@@ -182,11 +185,14 @@ int		main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)argc;
 	t_checks check;
-
+	// if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
+	// {
+	// 	exit(0);
+	// }
 	init_envp (envp, &check);
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //
-	check.rtn = 0;
+	check.rtn = 5;
 	status = 1;
 	while (status)
 	{
@@ -199,11 +205,6 @@ int		main(int argc, char **argv, char **envp)
 		//status = exec_args(&check);
 		close_files(&check);
 		free_args(&check);
-	}
-	if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
-	{
-		exit(0);
-	return (0);
 	}
 	return (0);
 }

@@ -63,6 +63,7 @@ int 	to_echo(t_checks *check, int p);
 int 	to_env(t_checks *check, int p);
 int 	to_export(t_checks *check, int p);
 int 	to_unset(t_checks *check, int p);
+int 	to_error(t_checks *check, int p);
 void 	init_envp(char **envp, t_checks *check);
 int 	ft_var_len(char *str, char c);
 void	ft_change_pwd(t_checks *check, char *buff);
@@ -72,7 +73,7 @@ void 	init_envp(char **envp, t_checks *check);
 int		ft_export_char(int c);
 void	create_file(t_process *pr);
 void	treat_files(t_checks *check);
-void 	my_errno(int err);
+void 	my_errno(int err, t_checks *check);
 void	zero_checks(t_checks *check);
 void	parse_args(t_checks *check, char *line);
 void	get_process(char *line, int n, t_checks *check, int j);
@@ -84,4 +85,5 @@ int		ft_get_var(char **envp, char *str, char **buff);
 int		ft_check_rtn(char *str, char **buff, t_checks *check);
 int 	ft_word_len(char *line);
 void	check_sep(char *buff, t_checks *check, int p);
+
 #endif

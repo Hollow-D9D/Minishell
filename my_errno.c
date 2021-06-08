@@ -12,13 +12,31 @@
 
 #include "includes/minishell.h"
 
-void my_errno(int err)
+void my_errno(int err, t_checks *check)
 {
+	// char *str;
+
+	check->rtn = err;
+	//printf("my errno: %d\n", check->rtn);
+// 	str = ft_itoa(err); 
+// 	printf("%s\n", str);
+// 	free (str);
+}
+
+
+int to_error(t_checks *check, int p)
+{
+	(void)p;
 	char *str;
 
-	str = ft_itoa(err); 
+	str = malloc(1000);
+	str = ft_itoa(check->rtn);
+	ft_putstr("command not found: ");
 	printf("%s\n", str);
-	free (str);
+	// ft_putstr_fd(get_var_param(g_params->env, "?"), 2);
+	// ft_putstr_fd("\n", 2);
+	free(str);
+	return (1);
 }
 
 /*

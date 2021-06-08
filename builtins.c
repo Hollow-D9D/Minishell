@@ -12,8 +12,6 @@
 
 #include "./includes/minishell.h"
 
-void check_sep(char *buff, t_checks *check, int p);
-
 int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima ashxatuma idealakan karcem
 {
 	int i;
@@ -40,7 +38,7 @@ int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima 
 		str = ft_strjoin(str, " ");
 		i++;
 	}
-	//my_errno(0); // read my_errno
+	//my_errno(errno, check); // read my_errno
 	if (!nflag)
 		str = ft_strjoin(str, "\n");
 	check_sep(str, check, p);
