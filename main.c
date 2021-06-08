@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+// lyuboy no such filei jamanak 127
 #include "./includes/minishell.h"
 
 char *builtin_str[] = 
@@ -115,13 +116,13 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 		if (pid == 0) 
   		{
   			if (check->coms[j].pr[1])
-  				check_input_redir()
+  				check_input_redir();
   			check_output_redir();
   			if (check->coms[j].pr[1])
   			{
   				if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     			{
-    				my_errno(errno, check);
+    				g_err = 127;
        				perror("exec failed");
     			}
     			exit(EXIT_SUCCESS);
@@ -133,12 +134,12 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
  				dup2(check->coms[i + 1].file_d, STDOUT_FILENO);
     		if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     		{
-    			my_errno(errno, check);
+    			g_err = 127;
        			perror("exec failed");
     		}
     	if (!fl && execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     	{
-    		my_errno(errno, check);
+    		g_err = 127;
        		perror("exec failed");
     	}
     	close(STDIN_FILENO);

@@ -30,6 +30,8 @@
 #define SPACES "\t\r\v\f \0"
 #define SEPERATORS "><|;"
 
+int g_err;
+
 typedef	struct	s_process
 {
 	char	**pr; //process name

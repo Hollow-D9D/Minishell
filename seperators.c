@@ -112,6 +112,7 @@ int		ft_give_sep(char *str, t_checks *check, int j) // ; null = 0 >> = 3 > = 4 |
 {
 	if ((str[0] != '>' && ft_check_char(SEPERATORS, str[1])))
 	{
+		g_err = 258; // ??
 		printf("syntax error near unexpected token %c\n", str[0]);
 		return (1);
 	}
