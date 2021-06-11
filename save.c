@@ -101,21 +101,6 @@ void	free_args(t_checks *check)
 	free(check->coms);
 }
 
-int check_pipe(t_checks *check, int j)
-{
-	if (check->coms[j].lsep == 1)
-	{
-		dup2(check->coms[j - 1].fd[1], STDIN_FILENO);
-	}
-	if(check->coms[j].rsep == 1)
-	{
-		if(!pipe(check->coms[j].fd))
-			return (-1);
-		dup2(check->coms[j].fd[0], STDOUT_FILENO);
-	}
-	return (0);
-}
-
 int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum, tencel petqa mez?
 {
 	pid_t pid;
@@ -124,29 +109,42 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 	int fl;
 
 	fl = 0;
-	i = j + 1;
-    pid = fork();
-	if (pid == 0) 
-  	{
-  		// check_pipe(check, j);
-  		while(i < check->argc && !check->coms[i].is_process)
+
+	i = j;
+	while(i < check->argc && !check->coms[i + 1].is_process)
+    {
+    	dup2(1, STDOUT_FILENO);
+		dup2(0, STDIN_FILENO);
+		pid = fork();
+		if (pid == 0) 
   		{
-    		if (check->coms[i].lsep == 2)
-    		{
-    			if(!check->coms[j].pr[1])
-   					dup2(check->coms[i].file_d, STDIN_FILENO);
+  			if (check->coms[j].pr[1])
+  			{
+  				else if (check->coms[i + 1].lsep > 2)
+ 					dup2(check->coms[i + 1].file_d, STDOUT_FILENO);
+  				if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
+    			{
+    				g_err = 127;
+       				perror("exec failed");
+    			}
+    			exit(EXIT_FAILURE);
     		}
-   			else if (check->coms[i].lsep > 2)
- 				dup2(check->coms[i].file_d, STDOUT_FILENO);
-    		i++;
-    	}
-  		if (execve(check->coms[j].pr[0], check->coms[j].pr, NULL) == -1) 
+    		fl = 1;
+    		if (check->coms[i + 1].lsep == 2)
+    			dup2(check->coms[i + 1].file_d, STDIN_FILENO);
+    		if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
+    		{
+    			g_err = 127;
+       			perror("exec failed");
+    		}
+    	if (!fl && execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     	{
     		g_err = 127;
        		perror("exec failed");
     	}
+    	close(STDIN_FILENO);
     	exit(EXIT_FAILURE);
-    }
+  		}
   	else if (pid < 0) 
   	{
    		perror("negative pid");
@@ -155,10 +153,15 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	{
     	do 
     	{
-      		waitpid(pid, &status, WUNTRACED); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
+      		waitpid(pid, &status, WUNTRACED); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем
+              									//статусе еще не было сообщено.
    		}
     	while (!WIFEXITED(status) && !WIFSIGNALED(status)); // WIFEXITED(status) не равно нулю, если дочерний процесс нормально завершился.	// 
-  	} 														//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за	//неперехваченного сигнала.
+  		if (check->coms[j].pr[1])
+  			break;
+  	}
+  	i++; 													//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за
+ 	}										//неперехваченного сигнала.
   return (0);
 }
 
@@ -216,6 +219,10 @@ int		main(int argc, char **argv, char **envp)
 	(void)argc;
 	t_checks check;
 	int n;
+	// if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
+	// {
+	// 	exit(0);
+	// }
 	init_envp (envp, &check);
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //

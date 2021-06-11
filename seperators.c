@@ -12,7 +12,7 @@
 
 #include "includes/minishell.h"
 
-int		ft_check_rtn(char *str, char **buff, t_checks *check)
+int		ft_check_rtn(char *str, char **buff, t_checks *check) // !!!!!!!!!!!!!!
 {
 	char *tmp;
 

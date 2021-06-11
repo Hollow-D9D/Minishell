@@ -46,6 +46,7 @@ typedef	struct	s_process
 typedef struct	s_checks
 {
 	int			argc;
+	// int			fd[2];
 	int			is_process; //stuguma arajin barna te che
 	int			quote; //stuguma ' baca te che
 	int			dquote; //stuguma " baca te che
