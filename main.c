@@ -109,29 +109,29 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 	int fl;
 
 	fl = 0;
+
 	i = j;
 	while(i < check->argc && !check->coms[i + 1].is_process)
     {
+    	dup2(1, STDOUT_FILENO);
+		dup2(0, STDIN_FILENO);
 		pid = fork();
 		if (pid == 0) 
   		{
   			if (check->coms[j].pr[1])
-  				check_input_redir();
-  			check_output_redir();
-  			if (check->coms[j].pr[1])
   			{
+  				else if (check->coms[i + 1].lsep > 2)
+ 					dup2(check->coms[i + 1].file_d, STDOUT_FILENO);
   				if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     			{
     				g_err = 127;
        				perror("exec failed");
     			}
-    			exit(EXIT_SUCCESS);
+    			exit(EXIT_FAILURE);
     		}
     		fl = 1;
     		if (check->coms[i + 1].lsep == 2)
     			dup2(check->coms[i + 1].file_d, STDIN_FILENO);
- 			else if (check->coms[i + 1].lsep > 2)
- 				dup2(check->coms[i + 1].file_d, STDOUT_FILENO);
     		if (execve(check->coms[j].pr[0], check->coms[j].pr, check->env) == -1) 
     		{
     			g_err = 127;
@@ -218,6 +218,7 @@ int		main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)argc;
 	t_checks check;
+	int n;
 	// if (feof(stdin))  // cntrl + D , bayc chi ashkhatum boozeh
 	// {
 	// 	exit(0);

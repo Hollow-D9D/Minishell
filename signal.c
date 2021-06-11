@@ -33,7 +33,7 @@ void	my_int(int sig)
 	pid = waitpid(-1, &status, WNOHANG);
 	if (sig == SIGINT)
 	{
-		p_err = 130;
+		g_err = 130;
 		ft_putchar_fd('\n', 1); // mi hat slesh ena dnum vor gna hajord togh mi hat el hajord toghum prost@ tpuma shell
 		if (pid)
 			write(1, "Shell> ", 7);
