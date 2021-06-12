@@ -179,8 +179,13 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   			free(pstr);
   			//free_path(path);
   			p++;
-    	}
-    	exit(EXIT_SUCCESS);
+  		}
+  		if ((execve(pstr, check->coms[j].pr, check->env)) == -1)
+  			{	
+  				g_err = 127;
+  				printf("Valodsminishell: command not found: %s\n", check->coms[j].pr[0]);
+  			}
+    	exit(EXIT_FAILURE);
     }
   	else if (pid < 0) 
   	{
@@ -287,7 +292,7 @@ int		main(int argc, char **argv, char **envp)
 	status = 1;
 	while (status)
 	{
-		dup2(check.fd[0],STDIN_FILENO);
+		dup2(check.fd[0], STDIN_FILENO);
 		dup2(check.fd[1], STDOUT_FILENO);
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma

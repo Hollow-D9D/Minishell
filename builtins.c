@@ -12,21 +12,16 @@
 
 #include "./includes/minishell.h"
 
-int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima ashxatuma idealakan karcem
+int to_echo(t_checks *check, int p)
 {
 	int i;
 	int nflag;
-	char *str; // inch@ vor petqa tpi sarquma string u uxarkuma en check_sep
+	char *str;
 
 	str = malloc(sizeof(char));
 	str[0] = 0;
 	nflag = 0;
 	i = 1;
-//	if (check->coms[p].pr[1])
-//	{
-//		write (check->coms[p].file_d, "\n", 1);
-//		return (0);
-//	}
 	if (check->coms[p].pr[1] && ft_strcmp(check->coms[p].pr[1], "-n") == 0)
 	{
 		i++;
@@ -38,11 +33,9 @@ int to_echo(t_checks *check, int p)           //bez obid miqich popoxel em hima 
 		str = ft_strjoin(str, " ");
 		i++;
 	}
-	//my_errno(errno, check); // read my_errno
 	if (!nflag)
 		str = ft_strjoin(str, "\n");
 	check_sep(str, check, p);
-	//my_errno(0); // read my_errno
 	return (0);
 }
 
@@ -83,7 +76,6 @@ int to_pwd(t_checks *check, int p)
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
 	check_sep(buffer, check, p);
-	//my_errno(0); // read my_errno
 	return (0);
 }
 
@@ -106,7 +98,6 @@ void	ft_change_pwd(t_checks *check, char *buff)
 		i++;
 	while(check->env[j] && ft_strncmp("OLDPWD=", check->env[j], 7))
 		j++;
-	// u ste stugi arkayutyan depqum mi hat envi i n ta envi j in
 	if (check->env[i] && check->env[j])
 	{
 		free(check->env[j]);
@@ -123,7 +114,6 @@ void	ft_change_pwd(t_checks *check, char *buff)
 	{
 		tmp = ft_strdup("PWD=");
 		tmp = ft_strjoin(tmp, buff);
-		//printf("%s\n", tmp);
 		check->env = ft_add_env_var(tmp, check->env);
 	}
 }

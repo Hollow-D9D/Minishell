@@ -40,7 +40,6 @@ typedef	struct	s_process
 	char	is_process;
 	char	lsep; //left seperator
 	char	rsep; //right seperator 
-	int		rtnv; //process return value
 }				t_process;
 
 typedef struct	s_checks
@@ -86,7 +85,7 @@ int		arg_count_base(char *line, t_checks *check, char *base);
 int		ft_give_sep(char *str, t_checks *check, int j);
 void 	ft_trim_quotes(char **str1, t_checks *check);
 int		ft_get_var(char **envp, char *str, char **buff);
-int		ft_check_rtn(char *str, char **buff, t_checks *check);
+int		ft_check_rtn(char *str, char **buff);
 int 	ft_word_len(char *line);
 void	check_sep(char *buff, t_checks *check, int p);
 

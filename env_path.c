@@ -12,27 +12,6 @@
 
 #include "./includes/minishell.h"
 
-// char **find_path(t_checks *check)
-// {
-// 	int i = 0;
-// 	char **pth;
-
-// 	pth = NULL;
-// 	while (check->env[i])
-// 	{
-// 		if (ft_strncmp("PATH=", check->env[i], 5) == 0)
-// 		{	
-// 			printf("%s\n", check->env[i]);
-// 			check->env[i] += 5;
-// 			pth = ft_split(check->env[i], ':');
-// 			break ;
-// 		}
-// 		i++;
-// 	}
-// 	//printf("%s\n", pth[i]);
-// 	return (pth);
-// }
-
 char **find_path(t_checks *check)
 {
 	int i = 0;
@@ -40,10 +19,6 @@ char **find_path(t_checks *check)
 	char **pth;
 
 	pth = NULL;
-	//printf("mta env\n");
-	// while (check->env[++i])
-	// 	printf("%s\n", check->env[i]);
-
 	while (check->env[i])
 	{
 		if (ft_strncmp("PATH=", check->env[i], 5) == 0)
@@ -54,7 +29,6 @@ char **find_path(t_checks *check)
 		}
 		i++;
 	}
-	//printf("%s\n", pth[i]);
 	return (pth);
 }
 

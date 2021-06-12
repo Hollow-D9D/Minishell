@@ -12,13 +12,14 @@
 
 #include "includes/minishell.h"
 
-int		ft_check_rtn(char *str, char **buff, t_checks *check) // !!!!!!!!!!!!!!
+int		ft_check_rtn(char *str, char **buff) // !!!!!!!!!!!!!!
 {
 	char *tmp;
 
 	if (str[1] == '?')
 	{
-		tmp = ft_itoa(check->rtn);
+		tmp = ft_itoa(g_err);
+		printf("%s\n", tmp);
 		*buff = ft_strjoin(*buff, tmp);
 		free (tmp);
 		return (2);
@@ -92,7 +93,7 @@ void ft_trim_quotes(char **str1, t_checks *check) //done test ara vorovhetev tru
 		// printf("c: %c  q: %d\n", str[i], check->quote);
 		if((str[i] == '$') && !check->quote)
 		{
-			if(ft_check_rtn(str + i, &buff, check) == 2)
+			if(ft_check_rtn(str + i, &buff) == 2)
 				i += 2;
 			else
 				i += ft_get_var(check->env, str + i, &buff);
