@@ -131,10 +131,10 @@ int to_cd(t_checks *check, int p)
 	char  	*temp;
 
 	i = 0;
+	while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
+			i++;
 	if (check->coms[p].pr[1] == NULL) 
 	{
-		while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
-			i++;
 		if(!check->env[i])
 			return (printf("NO HOME\n"));
 		if (chdir(check->env[i] + 5) != 0) 
@@ -146,8 +146,6 @@ int to_cd(t_checks *check, int p)
 	{
 		if (check->coms[p].pr[1][0] == '~')
 		{
-   			while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
-				i++;
    			temp = ft_strdup(check->coms[p].pr[1] + 1);
    			str = ft_strjoini_gev(check->env[i] + 5, temp);
    			chdir(str);
