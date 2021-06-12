@@ -73,7 +73,6 @@ int to_pwd(t_checks *check, int p)
 	char buffer[1024];
 	getcwd(buffer, 1024);
 	i = ft_strlen(buffer);
-	g_err = 888;
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
 	check_sep(buffer, check, p);
@@ -84,6 +83,11 @@ int to_exit(t_checks *check, int p)
 {
 	(void)check;
 	p = 0;
+	if (check->coms[p].pr[1])
+	{
+		p = ft_atoi(check->coms[p].pr[1]);
+	}
+	printf("%d\n", p);
 	exit(p);
 }
 
