@@ -17,6 +17,7 @@ SRCS		=	main.c \
 				my_errno.c \
 				parsing.c \
 				seperators.c \
+				env_path.c \
 
 OBJS		=	$(SRCS:.c=.o)
 

@@ -101,51 +101,86 @@ void	free_args(t_checks *check)
 	free(check->coms);
 }
 
-int check_pipe(t_checks *check, int j)
+
+char *ft_strjoini_gev(char const *s1, char const *s2)
 {
-	if (check->coms[j].lsep == 1)
-	{
-		dup2(check->coms[j - 1].fd[1], STDIN_FILENO);
-	}
-	if(check->coms[j].rsep == 1)
-	{
-		if(!pipe(check->coms[j].fd))
-			return (-1);
-		dup2(check->coms[j].fd[0], STDOUT_FILENO);
-	}
-	return (0);
+    char	*dest;
+	int		i;
+	int     one;
+	int     two;
+	
+
+	if (!(s1 && s2))
+	    return(NULL);
+	else
+	    one = ft_strlen(s1);
+    	two = ft_strlen(s2);
+	    dest = (char*)malloc(sizeof(char) * (one + two + 1));
+	    if (dest == NULL)
+		    return (NULL);
+  	i = -1 ;
+	while (s1[++i])
+        dest[i] = s1[i];
+    	i = -1;
+	while (s2[++i])
+    {
+        dest[one] = s2[i];
+        one++;
+    }
+	dest[one] = '\0';
+	return(dest);
 }
+
 
 int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum, tencel petqa mez?
 {
+	
 	pid_t pid;
 	int status;
 	int i;
 	int fl;
+	char **path;
+	int p;
+	char *pstr;
+	char *tmp;
 
+	path = NULL;
+	p = 0;
 	fl = 0;
 	i = j + 1;
+	path = find_path(check);
     pid = fork();
 	if (pid == 0) 
   	{
   		// check_pipe(check, j);
-  		while(i < check->argc && !check->coms[i].is_process)
-  		{
-    		if (check->coms[i].lsep == 2)
-    		{
-    			if(!check->coms[j].pr[1])
-   					dup2(check->coms[i].file_d, STDIN_FILENO);
-    		}
-   			else if (check->coms[i].lsep > 2)
- 				dup2(check->coms[i].file_d, STDOUT_FILENO);
-    		i++;
-    	}
-  		if (execve(check->coms[j].pr[0], check->coms[j].pr, NULL) == -1) 
+  		// while(i < check->argc && !check->coms[i].is_process)
+  		// {
+    // 		if (check->coms[i].lsep == 2)
+    // 		{
+    // 			if(!check->coms[j].pr[1])
+   	// 				dup2(check->coms[i].file_d, STDIN_FILENO);
+    // 		}
+   	// 		else if (check->coms[i].lsep > 2)
+ 			// 	dup2(check->coms[i].file_d, STDOUT_FILENO);
+    // 		i++;
+    // 	}
+      	while (path[p])
     	{
-    		g_err = 127;
-       		perror("exec failed");
+    		tmp = ft_strjoini_gev(path[p], "/");
+			pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
+			if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
+  			{
+  				free(tmp);
+  				free(pstr);
+  				//free_path(path);
+  				break ;
+  			}
+  			free(tmp);
+  			free(pstr);
+  			//free_path(path);
+  			p++;
     	}
-    	exit(EXIT_FAILURE);
+    	exit(EXIT_SUCCESS);
     }
   	else if (pid < 0) 
   	{
@@ -162,19 +197,45 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   return (0);
 }
 
+int check_pipe(t_checks *check, int j)
+{
+	pid_t pid;
+	if(check->coms[j].rsep == 1)
+	{
+		pipe(check->coms[j].fd);
+		pid = fork();
+		if (pid == 0)
+		{
+			close(check->coms[j].fd[1]);
+			dup2(check->coms[j].fd[0], STDIN_FILENO);
+			return (2);
+		}
+		else
+		{
+			close(check->coms[j].fd[0]);
+			dup2(check->coms[j].fd[1], STDOUT_FILENO);
+			return (1);
+		}
+	}
+	return (0);
+}
+
 int builtin(t_checks *check)
 {
 	int i;
 	int j;
+	int pipe;
 
 	j = 0;
 	while(j < check->argc)
 	{
 		if(check->coms[j].is_process)
 		{
+			pipe = check_pipe(check, j);
 			i = 0;
 			while (i < builtins_count())
 			{
+				pipe = check_pipe(check, j);
 				if (check->coms[j].is_process)
 					if (ft_strcmp(check->coms[j].pr[0], builtin_str[i]) == 0)
 					{
@@ -184,6 +245,8 @@ int builtin(t_checks *check)
 						break ;
 					}
 				i++;
+				if (pipe == 2)
+					break;
 			}
 			if (i == builtins_count())
 				execute(check, j);
@@ -210,12 +273,13 @@ int		main(int argc, char **argv, char **envp)
 {
 	char *line;
 	int status;
-	// int pid;
-	// int	cpid;
 	(void)argv;
 	(void)argc;
 	t_checks check;
 	int n;
+
+	check.fd[0] = dup(STDIN_FILENO);
+	check.fd[1] = dup(STDOUT_FILENO);
 	init_envp (envp, &check);
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //
@@ -223,6 +287,8 @@ int		main(int argc, char **argv, char **envp)
 	status = 1;
 	while (status)
 	{
+		dup2(check.fd[0],STDIN_FILENO);
+		dup2(check.fd[1], STDOUT_FILENO);
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		n = get_next_line(0, &line); //input 

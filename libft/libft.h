@@ -118,4 +118,6 @@ int				ft_strcmp(char *s1, char *s2);
 
 void			ft_putstr(char *str);
 
+// char 			*ft_strjoini_gev(char const *s1, char const *s2);
+
 #endif

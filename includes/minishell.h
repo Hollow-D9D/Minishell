@@ -46,7 +46,7 @@ typedef	struct	s_process
 typedef struct	s_checks
 {
 	int			argc;
-	// int			fd[2];
+	int			fd[2];
 	int			is_process; //stuguma arajin barna te che
 	int			quote; //stuguma ' baca te che
 	int			dquote; //stuguma " baca te che
@@ -70,6 +70,7 @@ int 	to_error(t_checks *check, int p);
 void 	init_envp(char **envp, t_checks *check);
 int 	ft_var_len(char *str, char c);
 void	ft_change_pwd(t_checks *check, char *buff);
+char 	**find_path(t_checks *check);
 char 	**ft_delete_env_var(int k, char **env);
 char 	**ft_add_env_var(char *str, char **env);
 void 	init_envp(char **envp, t_checks *check);
