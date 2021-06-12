@@ -73,6 +73,7 @@ int to_pwd(t_checks *check, int p)
 	char buffer[1024];
 	getcwd(buffer, 1024);
 	i = ft_strlen(buffer);
+	g_err = 888;
 	buffer[i] = '\n';
 	buffer[++i] = '\0';
 	check_sep(buffer, check, p);
@@ -122,6 +123,8 @@ int to_cd(t_checks *check, int p)
 {
 	int 	i;
 	char 	buff[1024];
+	char   	*str;
+	char  	*temp;
 
 	i = 0;
 	if (check->coms[p].pr[1] == NULL) 
@@ -134,10 +137,19 @@ int to_cd(t_checks *check, int p)
     	{
       		perror("lsh");
    		}
-  	} 
+  	}
 	else 
 	{
-		if (chdir(check->coms[p].pr[1]) != 0) 
+		if (check->coms[p].pr[1][0] == '~')
+		{
+   			while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
+				i++;
+   			temp = ft_strdup(check->coms[p].pr[1] + 1);
+   			str = ft_strjoini_gev(check->env[i] + 5, temp);
+   			chdir(str);
+   			free(str);
+		}
+		else if (chdir(check->coms[p].pr[1]) != 0) 
     	{
       		perror("lsh");
    		}

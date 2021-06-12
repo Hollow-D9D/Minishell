@@ -19,7 +19,6 @@ int		ft_check_rtn(char *str, char **buff) // !!!!!!!!!!!!!!
 	if (str[1] == '?')
 	{
 		tmp = ft_itoa(g_err);
-		printf("%s\n", tmp);
 		*buff = ft_strjoin(*buff, tmp);
 		free (tmp);
 		return (2);
