@@ -101,7 +101,6 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	}
 	if(ft_give_sep(line + n, check, j))
 		return ;
-	pipe(check->coms[j].fd);
 }
 
 void	parse_args(t_checks *check, char *line)

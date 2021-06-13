@@ -153,6 +153,11 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	pid = fork();
 	if (pid == 0) 
   	{
+  		if(ft_strcmp(check->coms[j].pr[0], "wc"))
+  		{
+  			write(check->coms[0].fd[0], 0, 1);
+  			close(check->coms[0].fd[0]);
+  		}
   		while(i < check->argc && !check->coms[i].is_process)
   		{
     		if (check->coms[i].lsep == 2)
@@ -163,8 +168,6 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
    			else if (check->coms[i].lsep > 2)
    			{
    				fl = 1;
-   				close(check->coms[i].fd[0]);
-   				close(check->coms[i].fd[1]);
  				dup2(check->coms[i].file_d, STDOUT_FILENO);
    			}
     		i++;
@@ -194,6 +197,7 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	} 
   	else 
   	{
+  		// close(STDIN_FILENO);
       		wait(0); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
       }
   return (0);
@@ -210,8 +214,9 @@ int check_pipe(t_checks *check, int j)
 		while(!check->coms[i].is_process)
 			i++;
 	}
-	if(check->coms[i].rsep == 1)
+	if(check->coms[j].rsep == 1 || (i != j && check->coms[i].lsep == 1))
 	{
+		pipe(check->coms[j].fd);
 		check->pid = fork();
 		if(check->pid < 0)
 			printf("fuck this shit i'm out\n");
