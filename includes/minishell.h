@@ -90,5 +90,6 @@ int		ft_get_var(char **envp, char *str, char **buff);
 int		ft_check_rtn(char *str, char **buff);
 int 	ft_word_len(char *line);
 void	check_sep(char *buff, t_checks *check, int p);
+char 	*ft_strjoini_gev(char const *s1, char const *s2);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/13 05:36:52 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/13 05:47:22 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,6 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   // printf("execute PID %d\n", pid);
 	if (pid == 0) 
   	{
-  		// check_pipe(check, j);
   		while(i < check->argc && !check->coms[i].is_process)
   		{
     		if (check->coms[i].lsep == 2)
@@ -173,12 +172,10 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   			{
   				free(tmp);
   				free(pstr);
-  				//free_path(path);
   				break ;
   			}
   			free(tmp);
   			free(pstr);
-  			//free_path(path);
   			p++;
   		}
   		if ((execve(pstr, check->coms[j].pr, check->env)) == -1)
@@ -186,6 +183,10 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   				g_err = 127;
   				printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
   			}
+  		{	
+  			printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
+  			g_err = 127;
+  		}
     	exit(EXIT_FAILURE);
     }
   	else if (pid < 0) 
@@ -194,14 +195,8 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	} 
   	else 
   	{
-    	// do 
-    	// {
       		wait(0); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
-   		// }
-    	// while (!WIFEXITED(status) && !WIFSIGNALED(status)); // WIFEXITED(status) не равно нулю, если дочерний процесс нормально завершился.	// 
-  	} 														//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за	//неперехваченного сигнала.
-      // close(check->coms[j].fd[0]);
-  		// close(check->coms[j].fd[1]);
+      }
   return (0);
 }
 
@@ -329,7 +324,11 @@ int		main(int argc, char **argv, char **envp)
 		zero_checks(&check); //zroyacnuma
 		n = get_next_line(0, &line); //input 
 		if (!n)
+		{	
+			g_err = 0;
+			write(1, "exit\n", 4);
 			exit(1);
+		}
 		parse_args(&check, line); // parse lines
 		treat_files(&check);
 		builtin(&check);
