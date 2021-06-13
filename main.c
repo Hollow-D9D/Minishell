@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/08 13:25:51 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/13 05:36:52 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 {
 	
 	pid_t pid;
-	int status;
+	// int status;
 	int i;
 	int fl;
 	char **path;
@@ -149,26 +149,27 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 	fl = 0;
 	i = j + 1;
 	path = find_path(check);
-    pid = fork();
+  pid = fork();
+  // printf("execute PID %d\n", pid);
 	if (pid == 0) 
   	{
   		// check_pipe(check, j);
-  		// while(i < check->argc && !check->coms[i].is_process)
-  		// {
-    // 		if (check->coms[i].lsep == 2)
-    // 		{
-    // 			if(!check->coms[j].pr[1])
-   	// 				dup2(check->coms[i].file_d, STDIN_FILENO);
-    // 		}
-   	// 		else if (check->coms[i].lsep > 2)
- 			// 	dup2(check->coms[i].file_d, STDOUT_FILENO);
-    // 		i++;
-    // 	}
+  		while(i < check->argc && !check->coms[i].is_process)
+  		{
+    		if (check->coms[i].lsep == 2)
+    		{
+    			if(!check->coms[j].pr[1])
+   					dup2(check->coms[i].file_d, STDIN_FILENO);
+    		}
+   			else if (check->coms[i].lsep > 2)
+ 				dup2(check->coms[i].file_d, STDOUT_FILENO);
+    		i++;
+    	}
       	while (path[p])
     	{
     		tmp = ft_strjoini_gev(path[p], "/");
-			pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
-			if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
+				pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
+				if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
   			{
   				free(tmp);
   				free(pstr);
@@ -183,7 +184,7 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   		if ((execve(pstr, check->coms[j].pr, check->env)) == -1)
   			{	
   				g_err = 127;
-  				printf("Valodsminishell: command not found: %s\n", check->coms[j].pr[0]);
+  				printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
   			}
     	exit(EXIT_FAILURE);
     }
@@ -193,32 +194,47 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	} 
   	else 
   	{
-    	do 
-    	{
-      		waitpid(pid, &status, WUNTRACED); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
-   		}
-    	while (!WIFEXITED(status) && !WIFSIGNALED(status)); // WIFEXITED(status) не равно нулю, если дочерний процесс нормально завершился.	// 
+    	// do 
+    	// {
+      		wait(0); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
+   		// }
+    	// while (!WIFEXITED(status) && !WIFSIGNALED(status)); // WIFEXITED(status) не равно нулю, если дочерний процесс нормально завершился.	// 
   	} 														//   WIFSIGNALED(status)  возвращает    истинное   значение,   если   дочерний   процесс   завершился   из-за	//неперехваченного сигнала.
+      // close(check->coms[j].fd[0]);
+  		// close(check->coms[j].fd[1]);
   return (0);
 }
 
 int check_pipe(t_checks *check, int j)
 {
-	pid_t pid;
 	if(check->coms[j].rsep == 1)
 	{
-		pipe(check->coms[j].fd);
-		pid = fork();
-		if (pid == 0)
+		// pipe(check->coms[j].fd);
+		check->pid = fork();
+		// printf("check->pid: %d\n", check->pid);
+		if(check->pid < 0)
+			printf("fuck this shit i'm out\n");
+		// printf("%d\n", check->pid);
+		if (check->pid == 0)
 		{
-			close(check->coms[j].fd[1]);
-			dup2(check->coms[j].fd[0], STDIN_FILENO);
+			if(j && check->coms[j - 1].rsep == 1)
+				check->coms[j].fd[1] = dup(check->coms[j - 1].fd[1]);
+			else
+			dup2(check->coms[j].fd[1], STDOUT_FILENO);
+			// close(check->coms[j].fd[1]);
+			close(check->coms[j].fd[0]);
 			return (2);
 		}
 		else
 		{
-			close(check->coms[j].fd[0]);
-			dup2(check->coms[j].fd[1], STDOUT_FILENO);
+			// printf("valod on service in check_pipe\n");
+			// printf("valod on service in check_pipe\n");
+			if(j && check->coms[j - 1].rsep == 1)
+				check->coms[j].fd[0] = dup(check->coms[j - 1].fd[0]);
+			else
+			dup2(check->coms[j].fd[0], STDIN_FILENO);
+			close(check->coms[j].fd[1]);
+			// close(check->coms[j].fd[0]);
 			return (1);
 		}
 	}
@@ -230,6 +246,7 @@ int builtin(t_checks *check)
 	int i;
 	int j;
 	int pipe;
+	// int status;
 
 	j = 0;
 	while(j < check->argc)
@@ -237,10 +254,25 @@ int builtin(t_checks *check)
 		if(check->coms[j].is_process)
 		{
 			pipe = check_pipe(check, j);
+			// printf("pid pipe%d j = %d\n", pipe, j);
+			if (pipe == 1)
+			{
+				// printf("valod on service\n");
+				check->is_child = 0;
+				while(wait(0) != -1 || errno != ECHILD)
+					;
+				// wait((check->pid + 1));
+    		j++;
+				continue ;
+			}
+			else if (pipe == 2)
+			{
+				check->is_child = 1;
+			}
+			// printf("%d\n", check->is_child);
 			i = 0;
 			while (i < builtins_count())
 			{
-				pipe = check_pipe(check, j);
 				if (check->coms[j].is_process)
 					if (ft_strcmp(check->coms[j].pr[0], builtin_str[i]) == 0)
 					{
@@ -250,11 +282,11 @@ int builtin(t_checks *check)
 						break ;
 					}
 				i++;
-				if (pipe == 2)
-					break;
 			}
 			if (i == builtins_count())
 				execute(check, j);
+			if (check->is_child)
+				exit(EXIT_FAILURE);
 		}
 		j++;
 	}
@@ -288,12 +320,11 @@ int		main(int argc, char **argv, char **envp)
 	init_envp (envp, &check);
 	signal(SIGINT, my_int); // ctrl + C //
 	signal(SIGQUIT, my_quit); // ctrl + \ //
-	check.rtn = 5;
 	status = 1;
 	while (status)
 	{
-		dup2(check.fd[0], STDIN_FILENO);
-		dup2(check.fd[1], STDOUT_FILENO);
+		// dup2(check.fd[0], STDIN_FILENO);
+		// dup2(check.fd[1], STDOUT_FILENO);
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		n = get_next_line(0, &line); //input 
@@ -305,6 +336,8 @@ int		main(int argc, char **argv, char **envp)
 		//status = exec_args(&check);
 		close_files(&check);
 		free_args(&check);
+		dup2(check.fd[0], STDIN_FILENO);
+		dup2(check.fd[1], STDOUT_FILENO);
 	}
 	return (0);
 }

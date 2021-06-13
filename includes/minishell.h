@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 16:21:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/06 20:31:50 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/13 01:28:29 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,13 @@ typedef struct	s_checks
 {
 	int			argc;
 	int			fd[2];
+	pid_t		pid;
 	int			is_process; //stuguma arajin barna te che
 	int			quote; //stuguma ' baca te che
 	int			dquote; //stuguma " baca te che
 	int			rtn;
 	int			index; //petqa vor haskananq parsingi vaxt ura hasel
+	int			is_child;
 	t_process	*coms; //mer commandnerna 
 	char		**env; //mer popoxakannerna $
 }				t_checks;

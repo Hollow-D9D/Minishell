@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/06 11:26:29 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/06 20:35:36 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/13 01:27:43 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,4 +137,6 @@ void	zero_checks(t_checks *check)
 	check->is_process = 0;
 	check->quote = 0;
 	check->dquote = 0;
+	check->is_child = 0;
+	check->pid = 0;
 }
