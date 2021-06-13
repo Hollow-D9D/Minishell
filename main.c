@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/11 14:50:13 by tharutyu          #+#    #+#             */
-/*   Updated: 2021/06/13 05:47:22 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/14 03:42:33 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,21 +172,26 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
    			}
     		i++;
     	}
-      	while (path[p])
+    	if (check->coms[j].pr[0][0] == '/')
     	{
-    		tmp = ft_strjoini_gev(path[p], "/");
-			pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
-			//printf("STRLEN==%lu\n", ft_strlen(pstr));
-			if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
-  			{
-  				free(tmp);
-  				free(pstr);
-  				break ;
-  			}
-  			free(tmp);
-  			free(pstr);
-  			p++;
-  		}
+    		execve(check->coms[j].pr[0], check->coms[j].pr, check->env);
+    	}
+    	else
+	      	while (path[p])
+	    	{
+	    		tmp = ft_strjoini_gev(path[p], "/");
+				pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
+				//printf("STRLEN==%lu\n", ft_strlen(pstr));
+				if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
+	  			{
+	  				free(tmp);
+	  				free(pstr);
+	  				break ;
+	  			}
+	  			free(tmp);
+	  			free(pstr);
+	  			p++;
+	  		}
   		printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
   		g_err = 127;
     	exit(EXIT_FAILURE);
