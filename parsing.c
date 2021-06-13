@@ -103,6 +103,23 @@ void		get_process(char *line, int n, t_checks *check, int j)
 		return ;
 }
 
+char *check_last_semicolon(char *line)
+{
+	int n;
+	char *tmp;
+
+	n = ft_strlen(line) - 1;
+	while(!ft_check_char(SEPERATORS, line[n]))
+	{
+		if(!ft_check_char(SPACES, line[n]))
+			return (line);
+		n--;
+	}
+	tmp = ft_substr(line, 0, n);
+	free(line);
+	return (tmp);
+}
+
 void	parse_args(t_checks *check, char *line)
 {
 	int i;
@@ -110,6 +127,7 @@ void	parse_args(t_checks *check, char *line)
 
 	i = -1;
 	j = 0;
+	line = check_last_semicolon(line);
 	check->argc = arg_count_base(line, check, SEPERATORS); //malloci hamar petqa vor imanas qani processi tegh es bacum
 	check->coms = ft_calloc(sizeof(t_process), check->argc);
 	while (line[++i])  //anavarta der mtacum em sra vra
