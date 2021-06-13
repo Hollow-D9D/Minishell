@@ -122,7 +122,7 @@ void	ft_change_pwd(t_checks *check, char *buff)
 		check->env = ft_add_env_var(tmp, check->env);
 	}
 }
-
+/// verjum ete ; ka eti ok a
 int to_cd(t_checks *check, int p)
 {
 	int 	i;
@@ -131,6 +131,12 @@ int to_cd(t_checks *check, int p)
 	char  	*temp;
 
 	i = 0;
+	if (check->coms[p].pr[1])
+		printf("PROCESS 1 NAME==%s\n", check->coms[p].pr[1]);
+	if (check->coms[p].pr[2])
+		printf("PROCESS 2 KA\n");
+	else 
+		printf("CHKA\n");
 	while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
 			i++;
 	if (check->coms[p].pr[1] == NULL) 
@@ -139,7 +145,7 @@ int to_cd(t_checks *check, int p)
 			return (printf("NO HOME\n"));
 		if (chdir(check->env[i] + 5) != 0) 
     	{
-      		perror("lsh");
+      		perror("xi araaaaa");
    		}
   	}
 	else 
@@ -153,7 +159,7 @@ int to_cd(t_checks *check, int p)
 		}
 		else if (chdir(check->coms[p].pr[1]) != 0) 
     	{
-      		perror("lsh");
+      		perror("NOOOO");
    		}
   	}
   	getcwd(buff, 1024);
