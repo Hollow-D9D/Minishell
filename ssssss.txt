@@ -29,4 +29,5 @@ seperators.o
 signal.c
 signal.o
 sss.txt
+ssssss.txt
 tar.txt

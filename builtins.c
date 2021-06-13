@@ -131,12 +131,6 @@ int to_cd(t_checks *check, int p)
 	char  	*temp;
 
 	i = 0;
-	if (check->coms[p].pr[1])
-		printf("PROCESS 1 NAME==%s\n", check->coms[p].pr[1]);
-	if (check->coms[p].pr[2])
-		printf("PROCESS 2 KA\n");
-	else 
-		printf("CHKA\n");
 	while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
 			i++;
 	if (check->coms[p].pr[1] == NULL) 

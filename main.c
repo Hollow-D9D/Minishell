@@ -96,6 +96,7 @@ void	free_args(t_checks *check)
 			free(check->coms[i].pr[j]);
 			j++;
 		}
+		free(check->coms[i].pr);
 		i++;
 	}
 	free(check->coms);
@@ -160,7 +161,12 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
    					dup2(check->coms[i].file_d, STDIN_FILENO);
     		}
    			else if (check->coms[i].lsep > 2)
+   			{
+   				fl = 1;
+   				close(check->coms[i].fd[0]);
+   				close(check->coms[i].fd[1]);
  				dup2(check->coms[i].file_d, STDOUT_FILENO);
+   			}
     		i++;
     	}
       	while (path[p])
@@ -178,15 +184,8 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   			free(pstr);
   			p++;
   		}
-  		if ((execve(pstr, check->coms[j].pr, check->env)) == -1)
-  			{	
-  				g_err = 127;
-  				printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
-  			}
-  		{	
-  			printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
-  			g_err = 127;
-  		}
+  		printf("minishell: command not found: %s\n", check->coms[j].pr[0]);
+  		g_err = 127;
     	exit(EXIT_FAILURE);
     }
   	else if (pid < 0) 
@@ -202,19 +201,25 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 
 int check_pipe(t_checks *check, int j)
 {
-	if(check->coms[j].rsep == 1)
+	int i;
+
+	i = j;
+	if(check->coms[j].rsep > 1)
 	{
-		// pipe(check->coms[j].fd);
+		i++;
+		while(!check->coms[i].is_process)
+			i++;
+	}
+	if(check->coms[i].rsep == 1)
+	{
 		check->pid = fork();
-		// printf("check->pid: %d\n", check->pid);
 		if(check->pid < 0)
 			printf("fuck this shit i'm out\n");
-		// printf("%d\n", check->pid);
 		if (check->pid == 0)
 		{
-			if(j && check->coms[j - 1].rsep == 1)
-				check->coms[j].fd[1] = dup(check->coms[j - 1].fd[1]);
-			else
+			// if(j && check->coms[j - 1].rsep == 1)
+			// 	check->coms[j].fd[1] = dup(check->coms[j - 1].fd[1]);
+			// else
 			dup2(check->coms[j].fd[1], STDOUT_FILENO);
 			// close(check->coms[j].fd[1]);
 			close(check->coms[j].fd[0]);
@@ -224,9 +229,9 @@ int check_pipe(t_checks *check, int j)
 		{
 			// printf("valod on service in check_pipe\n");
 			// printf("valod on service in check_pipe\n");
-			if(j && check->coms[j - 1].rsep == 1)
-				check->coms[j].fd[0] = dup(check->coms[j - 1].fd[0]);
-			else
+			// if(j && check->coms[j - 1].rsep == 1)
+			// 	check->coms[j].fd[0] = dup(check->coms[j - 1].fd[0]);
+			// else
 			dup2(check->coms[j].fd[0], STDIN_FILENO);
 			close(check->coms[j].fd[1]);
 			// close(check->coms[j].fd[0]);

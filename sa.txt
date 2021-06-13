@@ -24,9 +24,11 @@ parsing.o
 redirections.c
 redirections.o
 s.txt
+sa.txt
 seperators.c
 seperators.o
 signal.c
 signal.o
 sss.txt
+ssssss.txt
 tar.txt

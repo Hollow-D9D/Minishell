@@ -50,6 +50,7 @@ int		word_count_base(char *line, t_checks *check, char *base, int num)  //comple
 
 	n = 1;
 	i = 0;
+	//printf("%d\n", num);
 	while (i < num)
 	{
 		if (!check->dquote && line[i] == '\'')  //quote-handled
@@ -79,10 +80,12 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	int num;
 	int z;
 
+	num = 0;
 	i = check->index;
 	while (ft_check_char(SPACES, line[i]))
 		i++;
-	num = word_count_base(line + i, check, SPACES, n);
+	num = word_count_base(line + i, check, SPACES, n - i);
+	//printf("argc : %d\n", num);
 	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
 	check->coms[j].pr[num] = NULL;
 	z = 0;
