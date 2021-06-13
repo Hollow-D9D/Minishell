@@ -43,25 +43,19 @@ void check_sep(char *buff, t_checks *check, int p)
 {
 	int i;
 	int fl;
+	int fd;
 
 	fl = 0;
-	i = p;
-	while (i < check->argc && !check->coms[i + 1].is_process)
+	fd = 1;
+	i = p + 1;
+	printf("%d\n", check->argc);
+	while (i < check->argc && !check->coms[i].is_process)
 	{
-		if (check->coms[i + 1].lsep > 2)
-		{
-			write(check->coms[i + 1].file_d, buff, ft_strlen(buff));
-			fl = 1;
-		}
-		else if (!fl)
-		{
-			write(1, buff, ft_strlen(buff));
-			fl = 1;
-		}
+		printf("mta\n");
+		fd = dup(check->coms[i].file_d);
 		i++;
 	}
-	if (i == p && !fl)
-		write(1, buff, ft_strlen(buff));
+	write(fd, buff, ft_strlen(buff));
 	return ;
 }
 
