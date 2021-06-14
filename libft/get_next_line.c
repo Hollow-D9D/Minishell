@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
 
 int	get_next_line(int fd, char **line)
 {
@@ -32,6 +33,5 @@ int	get_next_line(int fd, char **line)
 	}
 	str[i] = '\0';
 	*line = str;
-	int j = ft_strlen(str);
-	return (j);
+	return (n);
 }

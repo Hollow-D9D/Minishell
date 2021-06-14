@@ -18,6 +18,7 @@ int to_echo(t_checks *check, int p)
 	int nflag;
 	char *str;
 
+	g_err = 0;
 	str = malloc(sizeof(char));
 	str[0] = 0;
 	nflag = 0;

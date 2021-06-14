@@ -88,15 +88,19 @@ void	free_args(t_checks *check)
 	while(i < check->argc)
 	{
 		j = 0;
-		while(check->coms[i].pr[j])
+		if(check->coms[i].pr)
 		{
-			free(check->coms[i].pr[j]);
-			j++;
+			while(check->coms[i].pr[j])
+			{
+				free(check->coms[i].pr[j]);
+				j++;
+			}
+			free(check->coms[i].pr);
+			i++;
 		}
-		free(check->coms[i].pr);
-		i++;
 	}
-	free(check->coms);
+	if(check->coms)
+		free(check->coms);
 }
 
 
@@ -188,7 +192,7 @@ int execute(t_checks *check, int j)
     }
   	else if (pid < 0) 
   	{
-   		perror("negative pid");
+   		printf("Cancel\n");
   	} 
   	else 
   	{
@@ -213,7 +217,7 @@ int check_pipe(t_checks *check, int j)
 		pipe(check->coms[j].fd);
 		check->pid = fork();
 		if(check->pid < 0)
-			printf("fuck this shit i'm out\n");
+			printf("Cancel\n");
 		if (check->pid == 0)
 		{
 			dup2(check->coms[j].fd[1], STDOUT_FILENO);
@@ -297,8 +301,10 @@ int		main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)argc;
 	t_checks check;
+	char *buff;
 	int n;
 
+	
 	check.fd[0] = dup(STDIN_FILENO);
 	check.fd[1] = dup(STDOUT_FILENO);
 	init_envp (envp, &check);
@@ -307,23 +313,40 @@ int		main(int argc, char **argv, char **envp)
 	status = 1;
 	while (status)
 	{
+		n = 3;
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
-		n = get_next_line(0, &line); //input 
-		if (!n) // mti gnl
-		{	
-			g_err = 0;
-			write(1, "exit\n", 5);
-			exit(0);
+		line = malloc(sizeof(char));
+		line[0] = '\0';
+		while(n)
+		{
+			if(!line[0] && n != 3)
+				write(1, "Shell> ", 7);
+			n = get_next_line(0, &buff); //input
+			line = ft_strjoin(line, buff);
+			if (!n && !line[0]) // mti gnl
+			{	
+				g_err = 0;
+				write(1, "exit\n", 5);
+				exit(0);
+			}
+			else if (!n)
+				write(1, "  \b\b\a", 5);
+			if (line[0] && n)
+				break ;
+			if(buff)
+				free (buff);
+			n = 1;
 		}
 		if(!parse_args(&check, line)) // parse lines
 		{
-			printf("mta\n");
 			treat_files(&check);
 			builtin(&check);
+			close_files(&check);
+			free_args(&check);
 		}
-		close_files(&check);
-		// free_args(&check);
+		if(line)
+			free(line);
 		dup2(check.fd[0], STDIN_FILENO);
 		dup2(check.fd[1], STDOUT_FILENO);
 	}

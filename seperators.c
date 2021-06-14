@@ -105,19 +105,9 @@ void ft_trim_quotes(char **str1, t_checks *check) //done test ara vorovhetev tru
 	free(buff);
 }
 
-int		ft_check_null(char *pr)
-{
-	if(pr)
-	{
-		return (0);
-	}
-	else
-		return (1);
-}
-
 int		ft_give_sep(char *str, t_checks *check, int j) // ; null = 0 >> = 3 > = 4 | = 1 < = 2 
 {
-	if ((str[0] == '>' && str[1] != str[0]) || ((str[0] != '>' && ft_check_char(SEPERATORS, str[1]))) || !check->coms[0].pr[0][0])
+	if ((str[0] == '>' && ft_check_char(SEPERATORS, str[1]) && str[1] != str[0]) || ((str[0] != '>' && ft_check_char(SEPERATORS, str[1]))) || !check->coms[0].pr[0][0])
 	{
 		g_err = 258; // ??
 		printf("syntax error near unexpected token %c\n", str[0]);

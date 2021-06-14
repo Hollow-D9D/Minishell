@@ -115,7 +115,6 @@ char *check_last_semicolon(char *line)
 		n--;
 	}
 	tmp = ft_substr(line, 0, n);
-	free(line);
 	return (tmp);
 }
 
