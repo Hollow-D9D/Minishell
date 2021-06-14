@@ -6,7 +6,7 @@
 /*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:28:10 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/08 00:06:17 by tharutyu         ###   ########.fr       */
+/*   Updated: 2021/06/14 17:41:49 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void check_sep(char *buff, t_checks *check, int p)
 	fl = 0;
 	fd = 1;
 	i = p + 1;
-	printf("%d\n", check->argc);
 	while (i < check->argc && !check->coms[i].is_process)
 	{
 		fd = dup(check->coms[i].file_d);
@@ -62,6 +61,7 @@ int to_pwd(t_checks *check, int p)
 {
 	int i;
 
+	g_err = 0;
 	(void)check;
 	char buffer[1024];
 	getcwd(buffer, 1024);
@@ -124,6 +124,7 @@ int to_cd(t_checks *check, int p)
 	char  	*temp;
 
 	i = 0;
+	g_err = 0;
 	while (check->env[i] && ft_strncmp("HOME=", check->env[i], 5))
 			i++;
 	if (check->coms[p].pr[1] == NULL) 

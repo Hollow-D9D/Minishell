@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_env_unset.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gamirjan <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: tharutyu <tharutyu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 15:29:06 by gamirjan          #+#    #+#             */
-/*   Updated: 2021/06/03 15:29:08 by gamirjan         ###   ########.fr       */
+/*   Updated: 2021/06/14 17:36:21 by tharutyu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,7 @@ int to_unset(t_checks *check, int p) // mer unsetn a kayfot funkcia a
 
 	i = 1;
 	if (check->coms[p].pr[1] == NULL)  // ete mi argumenta petqa es tpi
-	{
-		write(1, "unset: not enough arguments\n", 28);
 		return (0);
-	}
 	else
 		while (check->coms[p].pr[i])
 		{
@@ -78,11 +75,11 @@ int to_unset(t_checks *check, int p) // mer unsetn a kayfot funkcia a
 			}
 			i++;
 		}	
-
+	g_err = 0;
 	return (0);
 }
 
-char **ft_add_env_var(char *str, char **env)
+char **ft_add_env_var(char *str, char **env) 
 {
 	t_checks 	temp;
 	char 		**newenv;
@@ -91,6 +88,7 @@ char **ft_add_env_var(char *str, char **env)
 	
 	if (!ft_isalpha(str[0]) && (str[0] != '_' ))
 	{
+		g_err = 1;
 		printf("export: not an identifier: %c\n", str[0]);
 		return (env);
 	}
@@ -99,6 +97,7 @@ char **ft_add_env_var(char *str, char **env)
 	{
 		if (!ft_export_char(str[i]))
 		{			
+			g_err = 1;
 			printf("export: not valid in this context: %s\n", str);
 			return (env);
 		}
@@ -141,6 +140,7 @@ int to_export(t_checks *check, int p)
 	int j;
 
 	i = 1;
+	g_err = 0;
 	if (check->coms[p].pr[1] == NULL) // ete mi argumenta petqa env@ tpi
 		return (to_env(check, p));
 	else
@@ -163,7 +163,10 @@ int to_export(t_checks *check, int p)
 				continue ;
 			}
 			check->env = ft_add_env_var(check->coms[p].pr[i], check->env);
-			i++;
+			if (g_err == 1)
+				return (1);
+			else
+				i++;
 		}
 	return (0);
 }
@@ -174,16 +177,24 @@ int to_env(t_checks *check, int p) // mer envna ughaki malloci pah@ garlakhaca  
 	i = 0;
 	char *str;
 
-	(void)p;
-	str = malloc(sizeof(char));
-	str[0] = 0;
-	while (check->env[i])
+	if (check->coms[p].pr[1])
 	{
-		str = ft_strjoin(str, check->env[i]);
-		str = ft_strjoin(str, "\n");
-		i++;
+		g_err = 127;
+		printf("minishell: %s %s No such file or directory\n", check->coms[p].pr[0], check->coms[p].pr[1]);
 	}
-	check_sep(str, check, p);
+	else
+	{
+		str = malloc(sizeof(char));
+		str[0] = 0;
+		while (check->env[i])
+		{
+			str = ft_strjoin(str, check->env[i]);
+			str = ft_strjoin(str, "\n");
+			i++;
+		}
+		g_err = 0;
+		check_sep(str, check, p);
+	}
 	return (0);
 }
 
