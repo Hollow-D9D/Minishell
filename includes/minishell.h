@@ -78,7 +78,6 @@ void 	init_envp(char **envp, t_checks *check);
 int		ft_export_char(int c);
 void	create_file(t_process *pr);
 void	treat_files(t_checks *check);
-void 	my_errno(int err, t_checks *check);
 void	zero_checks(t_checks *check);
 void	parse_args(t_checks *check, char *line);
 void	get_process(char *line, int n, t_checks *check, int j);

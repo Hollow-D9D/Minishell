@@ -51,7 +51,6 @@ void check_sep(char *buff, t_checks *check, int p)
 	printf("%d\n", check->argc);
 	while (i < check->argc && !check->coms[i].is_process)
 	{
-		printf("mta\n");
 		fd = dup(check->coms[i].file_d);
 		i++;
 	}
@@ -81,7 +80,6 @@ int to_exit(t_checks *check, int p)
 	{
 		p = ft_atoi(check->coms[p].pr[1]);
 	}
-	printf("%d\n", p);
 	exit(p);
 }
 
@@ -116,7 +114,7 @@ void	ft_change_pwd(t_checks *check, char *buff)
 		check->env = ft_add_env_var(tmp, check->env);
 	}
 }
-/// verjum ete ; ka eti ok a
+
 int to_cd(t_checks *check, int p)
 {
 	int 	i;
@@ -130,10 +128,14 @@ int to_cd(t_checks *check, int p)
 	if (check->coms[p].pr[1] == NULL) 
 	{
 		if(!check->env[i])
-			return (printf("NO HOME\n"));
-		if (chdir(check->env[i] + 5) != 0) 
+		{
+			g_err = 1;
+			return (printf("minishell: %s: HOME not set\n", check->coms[p].pr[0]));
+		}
+		if (chdir(check->env[i] + 5) != 0)
     	{
-      		perror("xi araaaaa");
+      		g_err = 1;
+      		printf("minishell: %s %s No such file or directory\n", check->coms[p].pr[0], check->env[i] + 5);
    		}
   	}
 	else 
@@ -147,7 +149,8 @@ int to_cd(t_checks *check, int p)
 		}
 		else if (chdir(check->coms[p].pr[1]) != 0) 
     	{
-      		perror("NOOOO");
+      		g_err = 1;
+      		printf("minishell: %s %s No such file or directory\n", check->coms[p].pr[0], check->coms[p].pr[1]);
    		}
   	}
   	getcwd(buff, 1024);

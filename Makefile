@@ -14,7 +14,6 @@ SRCS		=	main.c \
 				export_env_unset.c \
 				builtins.c \
 				redirections.c\
-				my_errno.c \
 				parsing.c \
 				seperators.c \
 				env_path.c \

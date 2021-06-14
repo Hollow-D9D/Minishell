@@ -22,7 +22,6 @@ char *builtin_str[] =
 	"env",
 	"export",
 	"unset",
-	"error"
 };
 
 int (*builtin_func[]) (t_checks *, int) = {
@@ -33,7 +32,6 @@ int (*builtin_func[]) (t_checks *, int) = {
 	&to_env,
 	&to_export,
 	&to_unset,
-	&to_error
 };
 
 int builtins_count() 
