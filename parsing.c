@@ -109,7 +109,7 @@ char *check_last_semicolon(char *line)
 	char *tmp;
 
 	n = ft_strlen(line) - 1;
-	while(!ft_check_char(SEPERATORS, line[n]))
+	while(!ft_check_char(";", line[n]))
 	{
 		if(!ft_check_char(SPACES, line[n]))
 			return (line);

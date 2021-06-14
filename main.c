@@ -153,11 +153,6 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	pid = fork();
 	if (pid == 0) 
   	{
-  		if(ft_strcmp(check->coms[j].pr[0], "wc"))
-  		{
-  			write(check->coms[0].fd[0], 0, 1);
-  			close(check->coms[0].fd[0]);
-  		}
   		while(i < check->argc && !check->coms[i].is_process)
   		{
     		if (check->coms[i].lsep == 2)
@@ -333,16 +328,14 @@ int		main(int argc, char **argv, char **envp)
 	status = 1;
 	while (status)
 	{
-		// dup2(check.fd[0], STDIN_FILENO);
-		// dup2(check.fd[1], STDOUT_FILENO);
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		n = get_next_line(0, &line); //input 
 		if (!n)
 		{	
 			g_err = 0;
-			write(1, "exit\n", 4);
-			exit(1);
+			write(1, "exit\n", 5);
+			exit(0);
 		}
 		parse_args(&check, line); // parse lines
 		treat_files(&check);
