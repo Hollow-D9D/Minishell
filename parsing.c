@@ -50,7 +50,6 @@ int		word_count_base(char *line, t_checks *check, char *base, int num)  //comple
 
 	n = 1;
 	i = 0;
-	//printf("%d\n", num);
 	while (i < num)
 	{
 		if (!check->dquote && line[i] == '\'')  //quote-handled
@@ -74,7 +73,7 @@ int		word_count_base(char *line, t_checks *check, char *base, int num)  //comple
 	return (n);
 }
 
-void		get_process(char *line, int n, t_checks *check, int j)
+int			get_process(char *line, int n, t_checks *check, int j)
 {
 	int i;
 	int num;
@@ -85,7 +84,6 @@ void		get_process(char *line, int n, t_checks *check, int j)
 	while (ft_check_char(SPACES, line[i]))
 		i++;
 	num = word_count_base(line + i, check, SPACES, n - i);
-	//printf("argc : %d\n", num);
 	check->coms[j].pr = malloc(sizeof(char *) * (num + 1));
 	check->coms[j].pr[num] = NULL;
 	z = 0;
@@ -100,7 +98,8 @@ void		get_process(char *line, int n, t_checks *check, int j)
 		z++;
 	}
 	if(ft_give_sep(line + n, check, j))
-		return ;
+		return (1);
+	return (0);
 }
 
 char *check_last_semicolon(char *line)
@@ -120,7 +119,7 @@ char *check_last_semicolon(char *line)
 	return (tmp);
 }
 
-void	parse_args(t_checks *check, char *line)
+int		parse_args(t_checks *check, char *line)
 {
 	int i;
 	int j;
@@ -138,7 +137,8 @@ void	parse_args(t_checks *check, char *line)
 			check->dquote = !check->dquote;
 		if(!check->dquote && !check->quote && ft_check_char(SEPERATORS, line[i])) // seperatori conditionna test arac chi
 		{
-			get_process(line, i, check, j); //veradarcnuma tiv vor i-n iran chkorcni
+			if(get_process(line, i, check, j)) //veradarcnuma tiv vor i-n iran chkorcni
+				return (1);
 			j++; //processneri indexna
 			while(ft_check_char(SEPERATORS, line[i]))
 				i++;
@@ -146,7 +146,9 @@ void	parse_args(t_checks *check, char *line)
 			continue ;
 		}
 	}
-	get_process(line, i, check, j);
+	if(get_process(line, i, check, j))
+		return (1);
+	return (0);
 }
 
 

@@ -80,6 +80,7 @@ int to_exit(t_checks *check, int p)
 	{
 		p = ft_atoi(check->coms[p].pr[1]);
 	}
+	write(1, "exit\n", 5);
 	exit(p);
 }
 

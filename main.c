@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-// lyuboy no such filei jamanak 127
 #include "./includes/minishell.h"
 
 char *builtin_str[] = 
@@ -71,7 +70,7 @@ int ft_word_len(char *line) //valid function  menak imaci vor quoteri tvern ela 
 			q = !q;
 		if(!q && line[i] == '\"')
 			dq = !dq;
-		if(q || dq || (!ft_check_char(SPACES, line[i]) //nayuma minchev seperator kam space, ete quoteri meja ignora anum dranq u sharunakuma hashvel
+		if(q || dq || (!ft_check_char(SPACES, line[i]) 
 			&& !ft_check_char(SEPERATORS, line[i])))
 		i++;
 		else 
@@ -131,11 +130,10 @@ char *ft_strjoini_gev(char const *s1, char const *s2)
 }
 
 
-int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum, tencel petqa mez?
+int execute(t_checks *check, int j)
 {
 	
 	pid_t pid;
-	// int status;
 	int i;
 	int fl;
 	char **path;
@@ -174,7 +172,6 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
 	    	{
 	    		tmp = ft_strjoini_gev(path[p], "/");
 				pstr = ft_strjoini_gev(tmp, check->coms[j].pr[0]);
-				//printf("STRLEN==%lu\n", ft_strlen(pstr));
 				if ((execve(pstr, check->coms[j].pr, check->env)) != -1)
 	  			{
 	  				free(tmp);
@@ -195,9 +192,8 @@ int execute(t_checks *check, int j) //  ./ - ov u aranc dra execute normala anum
   	} 
   	else 
   	{
-  		// close(STDIN_FILENO);
-      		wait(0); // означает  возвращать  управление также для остановленных дочерних процессов, о чьем								//статусе еще не было сообщено.
-      }
+      	wait(0); 
+	}
   return (0);
 }
 
@@ -220,24 +216,14 @@ int check_pipe(t_checks *check, int j)
 			printf("fuck this shit i'm out\n");
 		if (check->pid == 0)
 		{
-			// if(j && check->coms[j - 1].rsep == 1)
-			// 	check->coms[j].fd[1] = dup(check->coms[j - 1].fd[1]);
-			// else
 			dup2(check->coms[j].fd[1], STDOUT_FILENO);
-			// close(check->coms[j].fd[1]);
 			close(check->coms[j].fd[0]);
 			return (2);
 		}
 		else
 		{
-			// printf("valod on service in check_pipe\n");
-			// printf("valod on service in check_pipe\n");
-			// if(j && check->coms[j - 1].rsep == 1)
-			// 	check->coms[j].fd[0] = dup(check->coms[j - 1].fd[0]);
-			// else
 			dup2(check->coms[j].fd[0], STDIN_FILENO);
 			close(check->coms[j].fd[1]);
-			// close(check->coms[j].fd[0]);
 			return (1);
 		}
 	}
@@ -249,7 +235,6 @@ int builtin(t_checks *check)
 	int i;
 	int j;
 	int pipe;
-	// int status;
 
 	j = 0;
 	while(j < check->argc)
@@ -257,14 +242,11 @@ int builtin(t_checks *check)
 		if(check->coms[j].is_process)
 		{
 			pipe = check_pipe(check, j);
-			// printf("pid pipe%d j = %d\n", pipe, j);
 			if (pipe == 1)
 			{
-				// printf("valod on service\n");
 				check->is_child = 0;
 				while(wait(0) != -1 || errno != ECHILD)
 					;
-				// wait((check->pid + 1));
     		j++;
 				continue ;
 			}
@@ -272,7 +254,6 @@ int builtin(t_checks *check)
 			{
 				check->is_child = 1;
 			}
-			// printf("%d\n", check->is_child);
 			i = 0;
 			while (i < builtins_count())
 			{
@@ -329,18 +310,20 @@ int		main(int argc, char **argv, char **envp)
 		write(1, "Shell> ", 7); //command prompt
 		zero_checks(&check); //zroyacnuma
 		n = get_next_line(0, &line); //input 
-		if (!n)
+		if (!n) // mti gnl
 		{	
 			g_err = 0;
 			write(1, "exit\n", 5);
 			exit(0);
 		}
-		parse_args(&check, line); // parse lines
-		treat_files(&check);
-		builtin(&check);
-		//status = exec_args(&check);
+		if(!parse_args(&check, line)) // parse lines
+		{
+			printf("mta\n");
+			treat_files(&check);
+			builtin(&check);
+		}
 		close_files(&check);
-		free_args(&check);
+		// free_args(&check);
 		dup2(check.fd[0], STDIN_FILENO);
 		dup2(check.fd[1], STDOUT_FILENO);
 	}

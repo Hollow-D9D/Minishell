@@ -203,4 +203,3 @@ void 	init_envp(char **envp, t_checks *check)
 		e++;
 	}
 }
-

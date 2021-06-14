@@ -25,7 +25,6 @@ void	create_file(t_process *pr)
 
 void	treat_files(t_checks *check)
 {
-	// int fd;
 	int i;
 
 	i = 0;

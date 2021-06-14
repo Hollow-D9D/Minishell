@@ -32,5 +32,6 @@ int	get_next_line(int fd, char **line)
 	}
 	str[i] = '\0';
 	*line = str;
-	return (n);
+	int j = ft_strlen(str);
+	return (j);
 }
