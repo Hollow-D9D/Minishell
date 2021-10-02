@@ -37,6 +37,7 @@ int to_echo(t_checks *check, int p)
 	if (!nflag)
 		str = ft_strjoin(str, "\n");
 	check_sep(str, check, p);
+	free(str);
 	return (0);
 }
 

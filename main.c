@@ -196,7 +196,16 @@ int execute(t_checks *check, int j)
   	} 
   	else 
   	{
-      	wait(0); 
+      	waitpid(pid, &g_err, WUNTRACED);
+      	int gevo = 0;
+      	while(path[gevo])
+      	{
+      		free(path[gevo]);
+      		gevo++;
+      	}
+      	free(path);
+      	if(g_err == 256)
+      		g_err = 1;
 	}
   return (0);
 }
@@ -324,6 +333,8 @@ int		main(int argc, char **argv, char **envp)
 				write(1, "Shell> ", 7);
 			n = get_next_line(0, &buff); //input
 			line = ft_strjoin(line, buff);
+			if(buff)
+				free (buff);
 			if (!n && !line[0]) // mti gnl
 			{	
 				g_err = 0;
@@ -334,8 +345,6 @@ int		main(int argc, char **argv, char **envp)
 				write(1, "  \b\b\a", 5);
 			if (line[0] && n)
 				break ;
-			if(buff)
-				free (buff);
 			n = 1;
 		}
 		if(!parse_args(&check, line)) // parse lines

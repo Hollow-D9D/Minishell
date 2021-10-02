@@ -25,6 +25,7 @@ char **find_path(t_checks *check)
 		{	
 			str = ft_strdup(check->env[i] + 5);
 			pth = ft_split(str, ':');
+			free(str);
 			break ;
 		}
 		i++;
